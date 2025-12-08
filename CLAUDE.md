@@ -41,15 +41,15 @@ test-roms/          # Test ROM collection
 ### Phase 1: CPU Core (Current)
 Focus on CPU-only debugging without peripherals. Must validate against jzIntv reference emulator.
 
-**Sprint 1.1 Deliverables** (current sprint):
-1. ✅ PRD.md (COMPLETE v1.2)
-2. ✅ ARCHITECTURE.md (COMPLETE v1.0)
-3. ⏳ CPU_SPECIFICATION.md
-4. ⏳ MCP_API.md
-5. ⏳ PROJECT_SETUP.md
-6. ⏳ USER_GUIDE.md (provisional)
+**Sprint 1.1 Deliverables** ✅ **COMPLETE**:
+1. ✅ PRD.md (v1.2)
+2. ✅ ARCHITECTURE.md (v1.0)
+3. ✅ CPU_SPECIFICATION.md (v1.0)
+4. ✅ MCP_API.md (v1.0)
+5. ✅ PROJECT_SETUP.md (v1.0)
+6. ✅ USER_GUIDE.md (v1.0 provisional)
 
-**Sprint 1.1 Done When**: All docs complete, project builds, tests run
+**Sprint 1.1 Status**: ✅ Documentation complete. Ready for Sprint 1.2 (Instruction Decoder implementation).
 
 ### Phase 2: Validation & Completion
 Complete all ~50 CP-1600 instructions, achieve >99% jzIntv compatibility, comprehensive testing.
