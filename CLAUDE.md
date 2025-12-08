@@ -125,10 +125,35 @@ Sessions: Multiple simultaneous debugging sessions with isolation
 
 ## Key Documentation
 
-### In This Repository
+### Core Documentation
 - **PRD_v1.2.md**: Complete product requirements (30KB, comprehensive)
-- **ARCHITECTURE.md**: Technical architecture and design decisions
-- **NEXT_STEPS.md**: Current sprint status and document outlines
+- **ARCHITECTURE.md**: Technical architecture and design decisions (system design, packages, modules)
+- **CPU_SPECIFICATION.md**: CP-1600 instruction set details (~50 instructions)
+- **MCP_API.md**: Complete MCP interface specification (30+ tools, 10+ resources)
+- **PROJECT_SETUP.md**: Repository structure, build system, testing strategy
+- **USER_GUIDE.md**: Provisional user documentation (workflows, examples)
+
+### Project Tracking Documents
+
+**ROADMAP.md** - High-level planning
+- Overview of all 4 phases
+- Sprint breakdown and milestone gates
+- Current status and what's next
+- Update at start/end of each sprint
+
+**WISHLIST.md** - Backlog and ideas
+- Nice-to-have features
+- Community requests
+- Future enhancements
+- Research topics
+- Add ideas as they arise
+
+**Sprint-N.md** - Current and historical sprints
+- Sprint-1.1.md: Foundation & Documentation (✅ complete)
+- Sprint-1.2.md: Instruction Decoder (⏳ current)
+- Sprint-1.3.md: Core Execution Engine (planned)
+- Detailed task lists, progress tracking
+- Keep all sprint docs for project history
 
 ### Resources Folder (Non-Open-Source Materials)
 The `resources/` folder contains background materials with different copyright restrictions that should NOT be moved to the open-source project root or subfolders:

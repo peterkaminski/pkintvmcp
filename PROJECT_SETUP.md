@@ -47,6 +47,9 @@ pkIntvMCP/
 │   └── air-strike.bin         # Commercial ROM for validation
 ├── resources/                 # Non-open-source background materials
 │   └── [excluded from git]    # Design conversations, restricted docs
+├── ROADMAP.md                 # High-level phases, milestones, success metrics
+├── WISHLIST.md                # Backlog, nice-to-have features, ideas
+├── Sprint-N.md                # Current and historical sprint plans
 ├── .gitignore                 # Git exclusions
 ├── package.json               # Root package (Turborepo)
 ├── turbo.json                 # Turborepo configuration
@@ -57,6 +60,93 @@ pkIntvMCP/
 
 Total estimated files: ~150-200 files (Phase 1)
 ```
+
+---
+
+## Project Tracking Documents
+
+### ROADMAP.md
+**Purpose:** High-level project planning and progress tracking
+
+**Contains:**
+- Overview of all 4 phases
+- Sprint breakdown for each phase
+- Milestone gates and success criteria
+- Current status and what's next
+- Key decisions and constraints
+
+**When to update:** Start/end of each sprint
+
+**Who uses:** Team leads, stakeholders, contributors
+
+---
+
+### WISHLIST.md
+**Purpose:** Backlog of ideas and nice-to-have features
+
+**Contains:**
+- Future enhancement ideas
+- Community requests
+- Low-priority features
+- Research topics
+- Explicitly deferred items (non-goals)
+
+**When to update:** As new ideas arise
+
+**Who uses:** Anyone with ideas, product planning
+
+---
+
+### Sprint-N.md (e.g., Sprint-1.2.md)
+**Purpose:** Detailed task breakdown for a specific sprint
+
+**Contains:**
+- Sprint goal and success criteria
+- Detailed task list with checkboxes
+- Estimated effort per task
+- Dependencies and blockers
+- Review and retrospective notes
+
+**When to update:**
+- Created at sprint start
+- Updated during sprint (check off tasks)
+- Finalized at sprint end
+- Kept for historical reference
+
+**Who uses:** Active developers, sprint planning
+
+**Naming convention:**
+- `Sprint-1.1.md` - Foundation & Documentation (completed)
+- `Sprint-1.2.md` - Instruction Decoder (current)
+- `Sprint-1.3.md` - Core Execution Engine (future)
+- ... etc.
+
+---
+
+### How to Use These Documents
+
+**Starting a new sprint:**
+1. Create `Sprint-N.md` (copy template from previous sprint)
+2. Fill in tasks, goals, success criteria
+3. Update ROADMAP.md to mark sprint as "In Progress"
+
+**During a sprint:**
+1. Check off tasks in `Sprint-N.md` as completed
+2. Add notes, blockers, decisions as they arise
+3. Keep focused on sprint document
+
+**Ending a sprint:**
+1. Complete retrospective section in `Sprint-N.md`
+2. Update ROADMAP.md to mark sprint complete
+3. Leave `Sprint-N.md` as historical record
+4. Create next `Sprint-N+1.md`
+
+**Adding ideas:**
+1. Add to WISHLIST.md with priority and complexity
+2. Discuss in Discord/issues if high value
+3. Move to ROADMAP.md if approved for future sprint
+
+---
 
 ---
 
