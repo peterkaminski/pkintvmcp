@@ -43,7 +43,7 @@ Focus on CPU-only debugging without peripherals. Must validate against jzIntv re
 
 **Sprint 1.1 Deliverables** (current sprint):
 1. ✅ PRD.md (COMPLETE v1.2)
-2. ⏳ ARCHITECTURE.md
+2. ✅ ARCHITECTURE.md (COMPLETE v1.0)
 3. ⏳ CPU_SPECIFICATION.md
 4. ⏳ MCP_API.md
 5. ⏳ PROJECT_SETUP.md
@@ -127,7 +127,16 @@ Sessions: Multiple simultaneous debugging sessions with isolation
 
 ### In This Repository
 - **PRD_v1.2.md**: Complete product requirements (30KB, comprehensive)
+- **ARCHITECTURE.md**: Technical architecture and design decisions
 - **NEXT_STEPS.md**: Current sprint status and document outlines
+
+### Resources Folder (Non-Open-Source Materials)
+The `resources/` folder contains background materials with different copyright restrictions that should NOT be moved to the open-source project root or subfolders:
+- Initial design conversations and brainstorming sessions
+- External documentation that may have licensing restrictions
+- Research materials and references
+
+**Important**: Content in `resources/` is excluded from version control (.gitignore) and should remain separate from the main project. Do not copy or move files from `resources/` into the open-source portions of the repository.
 
 ### External References
 - CP-1600 Microprocessor Users Manual (May 1975) - cycle timing on page 53+
