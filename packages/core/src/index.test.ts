@@ -15,6 +15,11 @@ describe('@pkintvmcp/core', () => {
     expect(Memory).toBeDefined();
   });
 
+  test('exports Decoder class', async () => {
+    const { Decoder } = await import('./index.js');
+    expect(Decoder).toBeDefined();
+  });
+
   test('exports decoder types', async () => {
     const { OpcodeEnum, AddressingModeEnum } = await import('./index.js');
     expect(OpcodeEnum).toBeDefined();

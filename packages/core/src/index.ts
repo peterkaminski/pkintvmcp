@@ -11,7 +11,8 @@
 export const version = '0.1.0';
 export const phase = '1.2-decoder';
 
-// Decoder types (Sprint 1.2)
+// Decoder (Sprint 1.2)
+export { Decoder } from './decoder/decoder.js';
 export type {
   Opcode,
   AddressingMode,
@@ -29,6 +30,5 @@ export { MemoryRegion as MemoryRegionEnum } from './memory/memory.types.js';
 
 // Future exports:
 // export { CPU } from './cpu/cpu.js';
-// export { Decoder } from './decoder/decoder.js';
 // export { Executor } from './executor/executor.js';
 // export { TraceBuffer } from './trace/trace-buffer.js';
