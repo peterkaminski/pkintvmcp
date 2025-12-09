@@ -96,5 +96,58 @@ Reorganized project documentation for better structure and maintainability.
 - Task 2: Define Core Types - 🟡 Next
 
 **Next steps:**
-1. Create instruction encoding reference (quick reference for implementation)
-2. Begin Task 2: Define Core Types (Opcode enum, Instruction interface, etc.)
+1. ✅ Create instruction encoding reference (quick reference for implementation)
+2. 🟢 Task 2: Define Core Types (in progress)
+
+### Instruction Encoding Reference ✅ COMPLETE
+
+Created comprehensive quick-reference guide for CP-1600 instruction bit patterns.
+
+**Created:** `docs/instruction-encoding.md` (554 lines)
+
+**Contents:**
+- Bit patterns for all Phase 1 and Phase 2 instructions
+- Organized by category (data movement, arithmetic, logic, control flow, etc.)
+- Decoding algorithm overview
+- Flag calculation helpers
+- Quick reference table with cycles and flags
+- Links to detailed specs in other docs
+
+**Value:**
+- Essential reference during decoder implementation
+- Faster lookups than full CPU specification
+- Condensed format perfect for implementation phase
+- Cross-referenced with CPU_SPECIFICATION.md and resources
+
+### Sprint 1.2 Task 2: Define Core Types ✅ COMPLETE
+
+**Status:** Core type definitions created and exported
+**Location:** `packages/core/src/decoder/decoder.types.ts`
+
+**Types Created:**
+- **Opcode enum**: All ~90 instruction opcodes (Phase 1 + Phase 2)
+  - Organized by functional category
+  - String-valued enum for better debugging
+  - Includes all variants (ADDR, SUBR, XORR, etc.)
+- **AddressingMode enum**: All 9 addressing modes
+  - IMPLIED, REGISTER, IMMEDIATE, DIRECT, INDIRECT
+  - INDEXED, STACK, DOUBLE_INDIRECT, SDBD_MODIFIED
+- **Operand interface**: Represents instruction operands
+  - Type: register | immediate | address
+  - Value: numeric operand value
+  - Optional autoIncrement flag for @@R4, @@R5
+- **Instruction interface**: Complete decoded instruction
+  - Address, opcode, addressing mode, operands
+  - Raw 10-bit instruction word
+  - SDBD flag, instruction length
+- **DecoderOptions interface**: Configuration options
+  - Strict mode (throw on invalid opcodes)
+  - Phase 2 enable flag
+
+**Exported from:**
+- `packages/core/src/index.ts` (barrel export)
+- Both type and enum exports available
+
+**Build status:** ✅ Compiles successfully (verified with npm run build)
+
+**Next:** Task 3: Implement Decoder Class (basic structure)

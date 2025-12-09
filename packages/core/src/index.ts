@@ -4,15 +4,25 @@
  * This package provides the core emulation functionality for the CP-1600
  * microprocessor used in the Intellivision game console.
  *
- * Phase 1.1: Skeleton package (compiles but no functionality yet)
- * Phase 1.2+: Will implement CPU, Memory, Decoder, Executor
+ * Phase 1.2: Instruction Decoder (in progress)
  */
 
-// Placeholder exports - will be replaced in Sprint 1.2+
+// Package metadata
 export const version = '0.1.0';
-export const phase = '1.1-skeleton';
+export const phase = '1.2-decoder';
 
-// Future exports (Sprint 1.2+):
+// Decoder types (Sprint 1.2)
+export type {
+  Opcode,
+  AddressingMode,
+  OperandType,
+  Operand,
+  Instruction,
+  DecoderOptions,
+} from './decoder/decoder.types.js';
+export { Opcode as OpcodeEnum, AddressingMode as AddressingModeEnum } from './decoder/decoder.types.js';
+
+// Future exports:
 // export { CPU } from './cpu/cpu.js';
 // export { Memory } from './memory/memory.js';
 // export { Decoder } from './decoder/decoder.js';
