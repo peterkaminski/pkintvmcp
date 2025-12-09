@@ -199,6 +199,37 @@ The `resources/` folder contains background materials with different copyright r
 4. **Read docs/resources-guide.md**: Reference materials and when to use them
 5. **Check docs/Sprint-N.md**: Current sprint tasks and progress
 6. **Follow sprint plan**: Implement, test, document, iterate
+7. **Update docs/project-log.md**: Document significant progress, decisions, completions
+
+### Maintaining the Project Log
+
+**IMPORTANT**: Update `docs/project-log.md` regularly to maintain project history.
+
+**When to add entries:**
+- Sprint completions or major milestones
+- Significant features implemented
+- Important decisions made
+- Problems solved or blockers resolved
+- Resource discoveries or integrations
+- Documentation reorganizations or updates
+
+**Entry format:**
+```markdown
+### [Feature/Task Name] ✅/🟢/🟡 [Status]
+
+Brief description of what was done.
+
+**Key details:**
+- Bullet points with specifics
+- Numbers, metrics, results
+- Files created/modified
+
+**Impact/Benefits:**
+- Why this matters
+- What it enables next
+```
+
+**Commit frequency**: Update and commit the project log at good checkpoints (end of task, end of day, after major work).
 
 ## Non-Goals
 

@@ -62,3 +62,39 @@ Conducted comprehensive review of `resources/` directory containing reference ma
 - All necessary reference materials in place for Sprint 1.2+
 
 **Usage policy**: Resources are for reference only, never copy verbatim into open source codebase. Read, understand, implement independently, then validate against jzIntv behavior.
+
+### Documentation Reorganization ✅ COMPLETE
+
+Reorganized project documentation for better structure and maintainability.
+
+**Changes:**
+- Moved all documentation files from project root to `docs/` folder
+- Updated `CLAUDE.md` with docs/ paths and current Sprint 1.2 status
+- Verified build and test still working (2 packages, 5 tests passing)
+- Updated Sprint-1.2.md to reflect Task 1 already complete from Sprint 1.1
+
+**Documentation now in docs/:**
+- PRD_v1.2.md, ARCHITECTURE.md, CPU_SPECIFICATION.md, MCP_API.md
+- PROJECT_SETUP.md, USER_GUIDE.md
+- ROADMAP.md, WISHLIST.md, Sprint-1.1.md, Sprint-1.2.md
+- resources-guide.md, project-log.md
+
+**Benefits:**
+- Cleaner project root
+- All docs in one logical location
+- Easier to navigate and maintain
+- Git history preserved (used `git mv`)
+
+### Sprint 1.2 Started 🟢 IN PROGRESS
+
+**Status:** Sprint 1.2 (Instruction Decoder) officially started
+**Started:** 2025-12-08
+**Goal:** Implement instruction decoder that can parse all Phase 1 instructions
+
+**Progress:**
+- Task 1: Initialize Monorepo Structure - ✅ Complete (from Sprint 1.1)
+- Task 2: Define Core Types - 🟡 Next
+
+**Next steps:**
+1. Create instruction encoding reference (quick reference for implementation)
+2. Begin Task 2: Define Core Types (Opcode enum, Instruction interface, etc.)
