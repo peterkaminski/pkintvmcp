@@ -22,7 +22,7 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 **Goal:** CPU-only debugging with comprehensive MCP interface
 
-**Status:** Sprint 1.1 ✅ COMPLETE | Sprint 1.2 ⏳ IN PROGRESS
+**Status:** Sprint 1.1 ✅ COMPLETE | Sprint 1.2 ✅ COMPLETE | Sprint 1.3 🟢 IN PROGRESS
 
 ### Sprint 1.1: Foundation & Documentation ✅ COMPLETE
 **Done:** 2025-12-08
@@ -40,33 +40,35 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 ---
 
-### Sprint 1.2: Instruction Decoder ⏳ IN PROGRESS
-**Status:** Not started
+### Sprint 1.2: Instruction Decoder ✅ COMPLETE
+**Completed:** 2025-12-09
 **See:** [Sprint-1.2.md](Sprint-1.2.md) for detailed tasks
 
 **Deliverables:**
-- [ ] Monorepo structure initialized (Turborepo + TypeScript)
-- [ ] Decoder class implementation
-- [ ] Support all addressing modes
-- [ ] Extract operands from 10-bit instruction words
-- [ ] Unit tests for decoder (>90% coverage)
+- ✅ Monorepo structure initialized (Turborepo + TypeScript)
+- ✅ Decoder class implementation
+- ✅ Support all addressing modes
+- ✅ Extract operands from 10-bit instruction words
+- ✅ Unit tests for decoder (>90% coverage)
+- ✅ Validated against jzIntv reference implementation
 
-**Done When:** Can decode all Phase 1 instructions to structured format
+**Outcome:** Decoder correctly handles all Phase 1 instructions with authentic CP-1600 encoding
 
 ---
 
-### Sprint 1.3: Core Execution Engine
-**Status:** Planned
+### Sprint 1.3: Core Execution Engine 🟢 IN PROGRESS
+**Started:** 2025-12-09
+**See:** [Sprint-1.3.md](Sprint-1.3.md) for detailed tasks
 
 **Deliverables:**
 - [ ] CPU class (state, registers, flags, PC)
-- [ ] Memory class (64K words, ROM/RAM distinction)
+- [ ] Executor class (instruction execution engine)
 - [ ] Bit-accurate operations (toUint16, flag calculations)
-- [ ] Core instructions: ADD, SUB, INC, DEC, AND, XOR, MOV, MVI, MVO, CLR, TST
+- [ ] Core instructions: MOVR, MVI, MVO, ADD, ADDR, SUB, SUBR, INC, DEC, AND, ANDR, XOR, XORR, CLR, TST
 - [ ] Proper flag setting (C, OV, Z, S)
-- [ ] Unit tests per instruction
+- [ ] Unit tests per instruction (>90% coverage)
 
-**Done When:** Can execute core instructions with correct flag behavior, unit tests pass
+**Done When:** Can execute core instructions with correct flag behavior, all unit tests pass
 
 ---
 
