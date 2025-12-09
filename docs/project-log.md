@@ -41,3 +41,24 @@ npm test       → 4 successful, 4 total (5 tests passing)
 - Build pipeline optimized with Turborepo caching
 
 The project is in excellent shape to move forward with **Sprint 1.2: Instruction Decoder Implementation**.
+
+### Resources Directory Review ✅ COMPLETE
+
+Conducted comprehensive review of `resources/` directory containing reference materials with potentially incompatible licensing.
+
+**Key resources catalogued:**
+- **CP-1600 documentation**: Instruction set manual, official users manual (May 1975)
+- **jzIntv documentation**: Complete reference docs (memory map, instruction summary, STIC, PSG, interrupts)
+- **Real code examples**: Air Strike (Peter's original game) with commented disassembly, jzIntv example programs
+- **System documentation**: "Your Friend The EXEC" API reference, De Re Intellivision chapters
+- **Project history**: Initial conversation documenting architectural decisions
+
+**Created**: `docs/resources-guide.md` (comprehensive guide explaining what each resource contains and when to use it during development)
+
+**Key findings:**
+- Excellent cycle timing reference in `jzintv-20200712-src/doc/programming/cp1600_summary.txt`
+- Air Strike disassembly provides real-world test case scenarios
+- Complete memory map documentation ready for Phase 3 peripheral implementation
+- All necessary reference materials in place for Sprint 1.2+
+
+**Usage policy**: Resources are for reference only, never copy verbatim into open source codebase. Read, understand, implement independently, then validate against jzIntv behavior.
