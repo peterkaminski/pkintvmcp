@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **pkIntvMCP** is an MCP (Model Context Protocol) server that enables AI assistants like Claude to debug and analyze CP-1600/Intellivision programs. The project emulates the CP-1600 16-bit microprocessor with a comprehensive debugging interface.
 
-**Current Status**: Sprint 1.1 (Foundation & Documentation) - Planning phase with no code yet.
+**Current Status**: Sprint 1.2 (Instruction Decoder) - Implementation in progress.
 
 ## Project Architecture
 
@@ -41,15 +41,15 @@ test-roms/          # Test ROM collection
 ### Phase 1: CPU Core (Current)
 Focus on CPU-only debugging without peripherals. Must validate against jzIntv reference emulator.
 
-**Sprint 1.1 Deliverables** ✅ **COMPLETE**:
-1. ✅ PRD.md (v1.2)
-2. ✅ ARCHITECTURE.md (v1.0)
-3. ✅ CPU_SPECIFICATION.md (v1.0)
-4. ✅ MCP_API.md (v1.0)
-5. ✅ PROJECT_SETUP.md (v1.0)
-6. ✅ USER_GUIDE.md (v1.0 provisional)
+**Sprint 1.1** ✅ **COMPLETE**:
+- All documentation complete (see docs/ folder)
+- Monorepo infrastructure set up
+- TypeScript + testing framework configured
+- Build and test verified working
 
-**Sprint 1.1 Status**: ✅ Documentation complete. Ready for Sprint 1.2 (Instruction Decoder implementation).
+**Sprint 1.2** 🟢 **IN PROGRESS**:
+- Task 1: Monorepo structure ✅ (completed in Sprint 1.1)
+- Task 2: Define Core Types (next)
 
 ### Phase 2: Validation & Completion
 Complete all ~50 CP-1600 instructions, achieve >99% jzIntv compatibility, comprehensive testing.
@@ -125,33 +125,35 @@ Sessions: Multiple simultaneous debugging sessions with isolation
 
 ## Key Documentation
 
-### Core Documentation
-- **PRD_v1.2.md**: Complete product requirements (30KB, comprehensive)
-- **ARCHITECTURE.md**: Technical architecture and design decisions (system design, packages, modules)
-- **CPU_SPECIFICATION.md**: CP-1600 instruction set details (~50 instructions)
-- **MCP_API.md**: Complete MCP interface specification (30+ tools, 10+ resources)
-- **PROJECT_SETUP.md**: Repository structure, build system, testing strategy
-- **USER_GUIDE.md**: Provisional user documentation (workflows, examples)
+### Core Documentation (in docs/)
+- **docs/PRD_v1.2.md**: Complete product requirements (30KB, comprehensive)
+- **docs/ARCHITECTURE.md**: Technical architecture and design decisions (system design, packages, modules)
+- **docs/CPU_SPECIFICATION.md**: CP-1600 instruction set details (~50 instructions)
+- **docs/MCP_API.md**: Complete MCP interface specification (30+ tools, 10+ resources)
+- **docs/PROJECT_SETUP.md**: Repository structure, build system, testing strategy
+- **docs/USER_GUIDE.md**: Provisional user documentation (workflows, examples)
+- **docs/resources-guide.md**: Guide to resources/ folder reference materials
+- **docs/project-log.md**: Chronological project log
 
-### Project Tracking Documents
+### Project Tracking Documents (in docs/)
 
-**ROADMAP.md** - High-level planning
+**docs/ROADMAP.md** - High-level planning
 - Overview of all 4 phases
 - Sprint breakdown and milestone gates
 - Current status and what's next
 - Update at start/end of each sprint
 
-**WISHLIST.md** - Backlog and ideas
+**docs/WISHLIST.md** - Backlog and ideas
 - Nice-to-have features
 - Community requests
 - Future enhancements
 - Research topics
 - Add ideas as they arise
 
-**Sprint-N.md** - Current and historical sprints
-- Sprint-1.1.md: Foundation & Documentation (✅ complete)
-- Sprint-1.2.md: Instruction Decoder (⏳ current)
-- Sprint-1.3.md: Core Execution Engine (planned)
+**docs/Sprint-N.md** - Current and historical sprints
+- docs/Sprint-1.1.md: Foundation & Documentation (✅ complete)
+- docs/Sprint-1.2.md: Instruction Decoder (🟢 in progress)
+- docs/Sprint-1.3.md: Core Execution Engine (planned)
 - Detailed task lists, progress tracking
 - Keep all sprint docs for project history
 
@@ -189,14 +191,14 @@ The `resources/` folder contains background materials with different copyright r
 3. **Clear error messages**: MCP tools must be self-documenting for Claude
 4. **Deterministic behavior**: Critical for reproducible debugging
 
-## When Ready to Code
+## Development Workflow
 
-1. **Start with PROJECT_SETUP.md**: Defines repository structure and build system
-2. **Then ARCHITECTURE.md**: Technical design and module boundaries
-3. **Then CPU_SPECIFICATION.md**: All ~50 instructions with pseudocode and test requirements
-4. **Initialize monorepo**: Turborepo + TypeScript + testing framework
-5. **Build skeleton**: All packages compile, tests run (even if empty)
-6. **Begin Sprint 1.2**: Instruction decoder implementation
+1. **Read docs/PROJECT_SETUP.md**: Repository structure and build system
+2. **Read docs/ARCHITECTURE.md**: Technical design and module boundaries
+3. **Read docs/CPU_SPECIFICATION.md**: All ~50 instructions with pseudocode
+4. **Read docs/resources-guide.md**: Reference materials and when to use them
+5. **Check docs/Sprint-N.md**: Current sprint tasks and progress
+6. **Follow sprint plan**: Implement, test, document, iterate
 
 ## Non-Goals
 

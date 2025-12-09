@@ -1,8 +1,8 @@
 # Sprint 1.2: Instruction Decoder
 
-**Status:** 🟡 Not Started
+**Status:** 🟢 In Progress
 **Sprint Goal:** Implement instruction decoder that can parse all Phase 1 instructions
-**Started:** TBD
+**Started:** 2025-12-08
 **Target Completion:** When all tasks complete
 
 ---
@@ -28,20 +28,20 @@ Build the instruction decoder that converts 10-bit instruction words (decles) in
 ## Tasks
 
 ### 1. Initialize Monorepo Structure
-**Status:** ⏳ Not Started
-**Owner:** TBD
-**Estimated Effort:** 2-3 hours
+**Status:** ✅ Complete (Sprint 1.1)
+**Owner:** Claude
+**Actual Effort:** Completed in Sprint 1.1
 
 **Tasks:**
-- [ ] Create `packages/` directory structure
-- [ ] Initialize `packages/core` with package.json
-- [ ] Initialize `packages/mcp-cpu` with package.json
-- [ ] Set up root package.json with workspaces
-- [ ] Configure Turborepo (turbo.json)
-- [ ] Set up TypeScript configuration (root + per-package)
-- [ ] Install dependencies
-- [ ] Verify: `npm run build` runs (even with empty packages)
-- [ ] Verify: `npm test` runs (even with no tests yet)
+- [x] Create `packages/` directory structure
+- [x] Initialize `packages/core` with package.json
+- [x] Initialize `packages/mcp-cpu` with package.json
+- [x] Set up root package.json with workspaces
+- [x] Configure Turborepo (turbo.json)
+- [x] Set up TypeScript configuration (root + per-package)
+- [x] Install dependencies
+- [x] Verify: `npm run build` runs (even with empty packages)
+- [x] Verify: `npm test` runs (even with no tests yet)
 
 **Verification:**
 ```bash
