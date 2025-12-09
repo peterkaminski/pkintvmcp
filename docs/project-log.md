@@ -151,3 +151,24 @@ Created comprehensive quick-reference guide for CP-1600 instruction bit patterns
 **Build status:** ✅ Compiles successfully (verified with npm run build)
 
 **Next:** Task 3: Implement Decoder Class (basic structure)
+
+### Sprint 1.2 Task 3: Decoder Class (Basic Structure) - PARTIAL ⏳
+
+**Status:** Infrastructure complete, opcode patterns need refinement
+**Location:** `packages/core/src/decoder/decoder.ts`
+
+**Implemented:**
+- Complete Decoder class structure with Memory integration
+- Main decode() method with full decoding pipeline
+- Helper methods: extractOpcode, extractAddressingMode, extractOperands, calculateLength
+- Helper predicates: usesSDBD, isImpliedMode, isRegisterMode
+
+**Test Suite:** 35 comprehensive tests
+- ✅ 17 tests passing (construction, error handling, properties)
+- ❌ 18 tests failing (opcode patterns need refinement)
+- Tests clearly identify what needs fixing
+
+**Build:** ✅ Compiles with strict TypeScript
+**Exports:** ✅ Available from @pkintvmcp/core
+
+**Next:** Task 5 - Refine opcode bit pattern matching to pass all decoder tests
