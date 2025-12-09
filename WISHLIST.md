@@ -440,6 +440,55 @@ This document tracks nice-to-have features, ideas, and future enhancements that 
 
 ---
 
+### Browser-Based Emulator
+**Priority:** High
+**Phase:** 4.x
+
+- Run emulator entirely in browser (no server needed)
+- WebAssembly for core emulation
+- JavaScript for MCP-like interface
+- Local ROM loading from user's file system
+
+**Value:** Zero installation, maximum accessibility
+
+**Complexity:** High - WASM port, browser APIs, file handling
+
+---
+
+### Visual Screen Display
+**Priority:** High
+**Phase:** 3.x (after STIC implementation)
+
+- Display Intellivision screen output as image
+- Real-time frame rendering
+- Show what the game looks like while debugging
+
+**Value:** Essential for graphics debugging
+
+**Complexity:** Medium - canvas rendering, frame buffer display
+
+---
+
+### Memory Visualization
+**Priority:** Medium
+**Phase:** 3.x
+
+- Visual display of GRAM (Graphics RAM)
+  - Show all 64 custom characters as 8x8 grids
+  - Color-coded by usage
+- Memory page visualizations
+  - BACKTAB view (20x12 screen cards)
+  - MOB data view (8 sprites)
+  - Stack visualization
+- Heat maps showing memory access patterns
+- Diff view: highlight changed memory
+
+**Value:** Makes memory state instantly understandable
+
+**Complexity:** Medium - canvas/SVG rendering, data visualization
+
+---
+
 ## Non-Goals / Explicitly Deferred
 
 These are things we've decided NOT to pursue:

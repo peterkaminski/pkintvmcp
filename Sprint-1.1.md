@@ -25,13 +25,13 @@ The PRD has been restructured with:
 5. ⏳ **PROJECT_SETUP.md** - Repository structure, build system, conventions
 6. ⏳ **USER_GUIDE.md** (Provisional) - Design-driven development guide
 
-**Infrastructure:**
-- Set up monorepo structure
-- Initialize TypeScript + testing framework
-- Skeleton code compiles
-- Tests run
+**Infrastructure:** ✅ COMPLETE
+- ✅ Set up monorepo structure (packages/core, packages/mcp-cpu)
+- ✅ Initialize TypeScript + testing framework (Vitest, strict mode)
+- ✅ Skeleton code compiles (2 packages build successfully)
+- ✅ Tests run (5 tests passing)
 
-**Sprint 1.1 Done When**: All docs complete, project builds, tests run
+**Sprint 1.1 Done When**: ✅ All docs complete, project builds, tests run
 
 ---
 

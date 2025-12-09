@@ -6,11 +6,16 @@ resources/
 
 # Dependencies
 node_modules/
+package-lock.json
 
 # Build outputs
 dist/
 build/
 *.log
+.turbo/
+
+# Test coverage
+coverage/
 
 # Environment variables
 .env
@@ -19,3 +24,6 @@ build/
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+.DS_Store
