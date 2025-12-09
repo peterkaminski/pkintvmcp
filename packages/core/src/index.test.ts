@@ -7,12 +7,17 @@ describe('@pkintvmcp/core', () => {
   });
 
   test('exports phase', () => {
-    expect(phase).toBe('1.1-skeleton');
+    expect(phase).toBe('1.2-decoder');
   });
 
-  test('placeholder test (Sprint 1.1)', () => {
-    // This ensures tests run successfully
-    // Real tests will be added in Sprint 1.2+
-    expect(true).toBe(true);
+  test('exports Memory class', async () => {
+    const { Memory } = await import('./index.js');
+    expect(Memory).toBeDefined();
+  });
+
+  test('exports decoder types', async () => {
+    const { OpcodeEnum, AddressingModeEnum } = await import('./index.js');
+    expect(OpcodeEnum).toBeDefined();
+    expect(AddressingModeEnum).toBeDefined();
   });
 });

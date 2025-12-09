@@ -22,9 +22,13 @@ export type {
 } from './decoder/decoder.types.js';
 export { Opcode as OpcodeEnum, AddressingMode as AddressingModeEnum } from './decoder/decoder.types.js';
 
+// Memory (Sprint 1.2)
+export { Memory } from './memory/memory.js';
+export type { MemoryOptions, MemoryRegion } from './memory/memory.types.js';
+export { MemoryRegion as MemoryRegionEnum } from './memory/memory.types.js';
+
 // Future exports:
 // export { CPU } from './cpu/cpu.js';
-// export { Memory } from './memory/memory.js';
 // export { Decoder } from './decoder/decoder.js';
 // export { Executor } from './executor/executor.js';
 // export { TraceBuffer } from './trace/trace-buffer.js';
