@@ -96,3 +96,38 @@ added without disturbing the overall structure.
 The intent is to create a **transparent, well-organized, reproducible record of
 AI collaboration**, improving engineering clarity while keeping the main codebase
 focused and clean.
+
+---
+
+## Integration Example Prompt
+
+```
+I used ChatGPT to analyze the Sprint 1.3 document, to create prompts for Manus to do the Sprint 1.3 work. I gave Manus those prompts, then collected its work output.
+
+I've made a new top-level dir, `ai-work`, for coordination between various AI tools. There is a `ai-work/README.md` explaining the purpose and structure of the dir.
+
+I've switched to a new branch for the next steps, pkma-sprint1.3-2025-12-09
+
+In this case, I'm giving you Manus's work output for Sprint 1.3 in `/ai-work/manus/sprint1.3/manus-sprint1.3-work.zip`.
+
+Unzip the work output into a temp folder in `ai-work`, analyze the files, then infer whether to integrate the work
+  output into our repo.
+
+Propose an integration plan in a short checklist before making changes, including:
+  - Where to copy or move each Manus source file in the main repo
+  - How to adapt exports (index files)
+  - How to merge or replace any overlapping functionality
+  - Which tests to port or adapt, and where they should live
+  - Any open questions, assumptions, or suggestions you have after your analysis
+
+After showing me the plan, start executing it step by step:
+  - Copy or move Manus files into the main repo structure (preserving relative imports where reasonable).
+  - Adjust TypeScript paths, imports, and exports to match the project’s tsconfig and module layout.
+  - Integrate or adapt test files so the main project’s test runner picks them up.
+
+When integration is wired up:
+  - Run the relevant tests (or the full `npm test` / `pnpm test` / `yarn test`, depending on the repo).
+  - Use comments like `// TODO(PK): ...` for anything that clearly needs a human’s decision.
+
+```
+
