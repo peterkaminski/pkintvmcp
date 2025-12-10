@@ -4,12 +4,16 @@
  * This package provides the core emulation functionality for the CP-1600
  * microprocessor used in the Intellivision game console.
  *
- * Phase 1.2: Instruction Decoder (in progress)
+ * Current Status: Sprint 1.4 Complete - Core Executor with 12 instructions
+ * - Data Movement: MOVR, MVI, MVO
+ * - Arithmetic: ADDR, SUBR, INCR, DECR
+ * - Logic: ANDR, XORR, CLRR
+ * - Status: TSTR, HLT
  */
 
 // Package metadata
 export const version = '0.1.0';
-export const phase = '1.3-executor';
+export const phase = '1.4-complete-executor';
 
 // Decoder (Sprint 1.2)
 export { Decoder } from './decoder/decoder.js';

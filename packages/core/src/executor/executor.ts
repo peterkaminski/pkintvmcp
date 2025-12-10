@@ -1,10 +1,5 @@
 /**
- * @pkintvmcp/core - Executor Implementation
- *
- * Instruction execution engine for CP-1600 CPU
- * Sprint 1.3: Core Execution Engine
- *
- * Adapted from Manus Sprint 1.3 work to integrate with existing decoder types.
+ * Executor implementation
  */
 
 import type { CPU } from '../cpu/cpu.js';
@@ -52,11 +47,11 @@ export class Executor {
       case Opcode.SUBR:
         this.executeSubr(instruction);
         break;
-      case Opcode.INC:
-        this.executeInc(instruction);
+      case Opcode.INCR:
+        this.executeIncr(instruction);
         break;
-      case Opcode.DEC:
-        this.executeDec(instruction);
+      case Opcode.DECR:
+        this.executeDecr(instruction);
         break;
 
       // Logical
@@ -66,13 +61,13 @@ export class Executor {
       case Opcode.XORR:
         this.executeXorr(instruction);
         break;
-      case Opcode.CLR:
-        this.executeClr(instruction);
+      case Opcode.CLRR:
+        this.executeClrr(instruction);
         break;
 
       // Control
-      case Opcode.TST:
-        this.executeTst(instruction);
+      case Opcode.TSTR:
+        this.executeTstr(instruction);
         break;
       case Opcode.HLT:
         this.executeHlt(instruction);
@@ -93,7 +88,6 @@ export class Executor {
    * Cycles: 6
    */
   private executeMovr(inst: Instruction): void {
-    // Extract operand values from decoder's Operand[] structure
     const src = inst.operands[0].value;
     const dst = inst.operands[1].value;
 
@@ -124,8 +118,6 @@ export class Executor {
    * Cycles: 8 (normal), 10 (SDBD mode)
    */
   private executeMvi(inst: Instruction): void {
-    // TODO(PK): Verify operand order - is it [imm, dst] or [dst, imm]?
-    // Based on CP-1600 convention and Manus's code, it's [imm, dst]
     const imm = inst.operands[0].value;
     const dst = inst.operands[1].value;
 
@@ -145,7 +137,9 @@ export class Executor {
     this.cpu.addCycles(cycles);
 
     if (this.options.trace) {
-      console.log(`MVI #${imm.toString(16)} -> R${dst}: value=${value.toString(16)}, sdbd=${inst.sdbd || false}`);
+      console.log(
+        `MVI #${imm.toString(16)} -> R${dst}: value=${value.toString(16)}, sdbd=${inst.sdbd}`
+      );
     }
   }
 
@@ -178,94 +172,255 @@ export class Executor {
 
   // ========== Arithmetic Instructions ==========
 
-  private executeAddr(_inst: Instruction): void {
-    // Stub: Add register to register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * ADDR - Add register to register
+   * Format: ADDR Rsrc, Rdst
+   * Operation: Rdst = Rdst + Rsrc
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeAddr(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const srcValue = this.cpu.getRegister(src);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform addition
+    const result = dstValue + srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, false);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('ADDR stub');
+      console.log(`ADDR R${src} + R${dst} = ${toUint16(result).toString(16)}`);
     }
   }
 
-  private executeSubr(_inst: Instruction): void {
-    // Stub: Subtract register from register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * SUBR - Subtract register from register
+   * Format: SUBR Rsrc, Rdst
+   * Operation: Rdst = Rdst - Rsrc
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeSubr(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const srcValue = this.cpu.getRegister(src);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform subtraction
+    const result = dstValue - srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('SUBR stub');
+      console.log(`SUBR R${dst} - R${src} = ${toUint16(result).toString(16)}`);
     }
   }
 
-  private executeInc(_inst: Instruction): void {
-    // Stub: Increment register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * INCR - Increment register
+   * Format: INCR Rdst
+   * Operation: Rdst = Rdst + 1
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeIncr(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform increment
+    const result = dstValue + 1;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, 1, false);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('INC stub');
+      console.log(`INCR R${dst} = ${toUint16(result).toString(16)}`);
     }
   }
 
-  private executeDec(_inst: Instruction): void {
-    // Stub: Decrement register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * DECR - Decrement register
+   * Format: DECR Rdst
+   * Operation: Rdst = Rdst - 1
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeDecr(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform decrement
+    const result = dstValue - 1;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, 1, true);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('DEC stub');
+      console.log(`DECR R${dst} = ${toUint16(result).toString(16)}`);
     }
   }
 
   // ========== Logical Instructions ==========
 
-  private executeAndr(_inst: Instruction): void {
-    // Stub: AND register with register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * ANDR - Bitwise AND register with register
+   * Format: ANDR Rsrc, Rdst
+   * Operation: Rdst = Rdst & Rsrc
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 6
+   */
+  private executeAndr(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const srcValue = this.cpu.getRegister(src);
+    const dstValue = this.cpu.getRegister(dst);
+
+    const result = dstValue & srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('ANDR stub');
+      console.log(`ANDR R${src} & R${dst} = ${result.toString(16)}`);
     }
   }
 
-  private executeXorr(_inst: Instruction): void {
-    // Stub: XOR register with register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * XORR - Bitwise XOR register with register
+   * Format: XORR Rsrc, Rdst
+   * Operation: Rdst = Rdst ^ Rsrc
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 6
+   */
+  private executeXorr(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const srcValue = this.cpu.getRegister(src);
+    const dstValue = this.cpu.getRegister(dst);
+
+    const result = dstValue ^ srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('XORR stub');
+      console.log(`XORR R${src} ^ R${dst} = ${result.toString(16)}`);
     }
   }
 
-  private executeClr(_inst: Instruction): void {
-    // Stub: Clear register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * CLRR - Clear register
+   * Format: CLRR Rdst
+   * Operation: Rdst = 0
+   * Flags: Z=1, S=0; C, OV unchanged
+   * Cycles: 6
+   */
+  private executeClrr(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+
+    // Clear register to zero
+    this.cpu.setRegister(dst, 0);
+
+    // Always set Z=1, S=0 (C, OV unchanged)
+    this.cpu.setFlags({ Z: true, S: false });
+
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('CLR stub');
+      console.log(`CLRR R${dst} = 0`);
     }
   }
 
   // ========== Control Instructions ==========
 
-  private executeTst(_inst: Instruction): void {
-    // Stub: Test register
-    // TODO(PK): Implement in Sprint 1.4 or later
+  /**
+   * TSTR - Test register
+   * Format: TSTR Rsrc
+   * Operation: Test register value (no storage)
+   * Flags: Z, S updated; C=0, OV=0
+   * Cycles: 6
+   */
+  private executeTstr(inst: Instruction): void {
+    const reg = inst.operands[0].value;
+    const value = this.cpu.getRegister(reg);
+
+    // Set S and Z, clear C and OV
+    const Z = value === 0;
+    const S = getBit(value, 15) === 1;
+    this.cpu.setFlags({ Z, S, C: false, OV: false });
+
+    this.cpu.addCycles(6);
+
     if (this.options.trace) {
-      console.log('TST stub');
+      console.log(`TSTR R${reg} = ${value.toString(16)}`);
     }
   }
 
+  /**
+   * HLT - Halt processor
+   * Format: HLT
+   * Operation: Set halted flag
+   * Flags: None updated
+   * Cycles: 4
+   */
   private executeHlt(_inst: Instruction): void {
-    // Stub: Halt execution
-    // TODO(PK): Implement in Sprint 1.4 or later
+    const state = this.cpu.getState();
+    state.halted = true;
+    this.cpu.setState(state);
+
+    this.cpu.addCycles(4);
+
     if (this.options.trace) {
-      console.log('HLT stub');
+      console.log('HLT - Processor halted');
     }
   }
 
   // ========== Flag Helpers ==========
 
-  // TODO(PK): Uncomment when implementing arithmetic instructions (ADDR, SUBR, etc.)
-  /*
   /**
    * Set arithmetic flags based on operation result
    *
-   * @param result - The 16-bit result of the operation
+   * @param result - The result of the operation (may be > 16-bit)
    * @param op1 - First operand (16-bit)
    * @param op2 - Second operand (16-bit)
    * @param isSubtraction - True for subtraction, false for addition
-   *\/
+   */
   private setArithmeticFlags(
     result: number,
     op1: number,
@@ -290,7 +445,7 @@ export class Executor {
       C = op1_16 < op2_16;
     } else {
       // For addition: C is set if there was a carry out of bit 15
-      C = result > 0xFFFF;
+      C = result > 0xffff;
     }
 
     // OV flag: signed overflow
@@ -304,14 +459,13 @@ export class Executor {
 
     if (isSubtraction) {
       // Subtraction overflow: (op1 ^ op2) & (op1 ^ result) & 0x8000
-      OV = (op1_sign !== op2_sign) && (op1_sign !== result_sign);
+      OV = op1_sign !== op2_sign && op1_sign !== result_sign;
     } else {
       // Addition overflow: ~(op1 ^ op2) & (op1 ^ result) & 0x8000
-      OV = (op1_sign === op2_sign) && (op1_sign !== result_sign);
+      OV = op1_sign === op2_sign && op1_sign !== result_sign;
     }
 
     // Update CPU flags
     this.cpu.setFlags({ C, OV, Z, S });
   }
-  */
 }
