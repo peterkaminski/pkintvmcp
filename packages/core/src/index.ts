@@ -9,7 +9,7 @@
 
 // Package metadata
 export const version = '0.1.0';
-export const phase = '1.2-decoder';
+export const phase = '1.3-executor';
 
 // Decoder (Sprint 1.2)
 export { Decoder } from './decoder/decoder.js';
@@ -28,7 +28,16 @@ export { Memory } from './memory/memory.js';
 export type { MemoryOptions, MemoryRegion } from './memory/memory.types.js';
 export { MemoryRegion as MemoryRegionEnum } from './memory/memory.types.js';
 
+// CPU (Sprint 1.3)
+export { CPU } from './cpu/cpu.js';
+export type { CPUState, CPUFlags, ExecutorOptions } from './cpu/cpu.types.js';
+
+// Executor (Sprint 1.3)
+export { Executor } from './executor/executor.js';
+export type { Memory as MemoryInterface } from './executor/executor.types.js';
+
+// Utilities (Sprint 1.3)
+export { toUint16, toInt16, toUint10, getBit, setBit, clearBit } from './utils/bitops.js';
+
 // Future exports:
-// export { CPU } from './cpu/cpu.js';
-// export { Executor } from './executor/executor.js';
 // export { TraceBuffer } from './trace/trace-buffer.js';
