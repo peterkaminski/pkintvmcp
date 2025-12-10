@@ -541,3 +541,167 @@ Duration  157ms
 3. Implement logic instructions (ANDR, XORR, CLR)
 4. Implement status instructions (TST, HLT)
 5. Create execution loop tying decoder + executor together
+
+---
+
+### Sprint 1.4: Complete Executor Implementation ✅ COMPLETE
+
+**Status:** Successfully integrated Manus's Sprint 1.4 implementation
+**Date:** 2025-12-09
+**Test Results:** 226/226 tests passing (up from 129, +97 tests, +75% increase)
+
+**Integration Summary:**
+
+Integrated Manus's complete executor implementation, adding 9 new instructions (arithmetic, logic, and status operations) with comprehensive test coverage.
+
+**New Instructions Implemented:**
+
+**Arithmetic (4 instructions):**
+1. `ADDR` - Add register to register, sets all flags (C, OV, Z, S)
+2. `SUBR` - Subtract register from register, sets all flags
+3. `INCR` - Increment register by 1, sets all flags
+4. `DECR` - Decrement register by 1, sets all flags
+
+**Logic (3 instructions):**
+1. `ANDR` - Bitwise AND, sets Z/S only (C/OV unchanged)
+2. `XORR` - Bitwise XOR, sets Z/S only (C/OV unchanged)
+3. `CLRR` - Clear register to zero, always Z=1, S=0 (C/OV unchanged)
+
+**Status (2 instructions):**
+1. `TSTR` - Test register, sets Z/S, clears C/OV
+2. `HLT` - Halt processor, sets halted flag
+
+**Files Updated:**
+
+1. **`packages/core/src/executor/executor.ts`** (472 lines)
+   - Added 9 instruction implementations
+   - Implemented `setArithmeticFlags()` helper with bit-accurate flag calculations
+   - Handles unsigned carry/borrow (C flag)
+   - Handles signed overflow (OV flag)
+   - Supports both addition and subtraction modes
+
+2. **`packages/core/src/executor/executor.test.ts`** (NEW, 41 tests)
+   - Comprehensive instruction tests
+   - Test helper: `createTestInstruction()` for decoder-compatible objects
+   - MockMemory implementation for isolated testing
+   - Edge case coverage (overflow, underflow, wrapping, flag preservation)
+
+3. **`packages/core/src/executor/executor.dispatch.test.ts`** (NEW, 26 tests)
+   - Adapted from Sprint 1.3 with decoder types
+   - Constructor, dispatch, invalid opcode, trace mode tests
+
+4. **`packages/core/src/executor/executor.data.test.ts`** (NEW, 30 tests)
+   - Adapted from Sprint 1.3 with decoder types
+   - MOVR, MVI (with SDBD), MVO tests
+
+**Integration Process:**
+
+1. **Analysis** - Extracted ZIP, reviewed README and test results (173 tests in Manus's environment)
+2. **File Integration** - Copied executor.ts and three test files
+3. **Import Path Fixes** - Fixed imports to use `.js` extensions for ES modules
+4. **Testing** - All 226 tests passing after import fixes
+
+**Test Coverage:**
+```
+Test Files  9 passed (9)
+     Tests  226 passed (226)
+Duration  380ms
+
+✓ src/cpu/cpu.types.test.ts          (15 tests)
+✓ src/utils/bitops.test.ts           (33 tests)
+✓ src/cpu/cpu.test.ts                (28 tests)
+✓ src/memory/memory.test.ts          (24 tests)
+✓ src/executor/executor.data.test.ts      (30 tests) ← NEW
+✓ src/executor/executor.dispatch.test.ts  (26 tests) ← NEW
+✓ src/index.test.ts                   (5 tests)
+✓ src/decoder/decoder.test.ts        (24 tests)
+✓ src/executor/executor.test.ts      (41 tests) ← NEW
+```
+
+**Code Coverage:**
+```
+File           | % Stmts | % Branch | % Funcs | % Lines
+---------------|---------|----------|---------|--------
+All files      |   94.19 |    82.19 |     100 |   94.03
+ cpu           |     100 |      100 |     100 |     100
+ decoder       |     100 |      100 |     100 |     100
+ executor      |   91.55 |     74.5 |     100 |   91.55
+ utils         |     100 |      100 |     100 |     100
+```
+
+**✅ Exceeds 90% requirement**
+
+**Critical Test Cases Verified:**
+
+- Signed overflow: `0x7FFF + 0x0001 = 0x8000` → OV=1, S=1
+- Signed overflow: `0x8000 - 0x0001 = 0x7FFF` → OV=1, S=0
+- Unsigned overflow with zero: `0xFFFF + 0x0001 = 0x0000` → C=1, Z=1
+- Increment wrap: `INCR R0 (0xFFFF)` → 0x0000, C=1, Z=1
+- Decrement wrap: `DECR R0 (0x0000)` → 0xFFFF, C=1, S=1
+- Flag preservation for logic operations (ANDR, XORR, CLRR)
+
+**Flag Behavior Summary:**
+
+| Instruction | C | OV | Z | S | Notes |
+|-------------|---|----|----|---|-------|
+| MOVR        | - | -  | ✓  | ✓ | C/OV unchanged |
+| MVI         | - | -  | ✓  | ✓ | C/OV unchanged |
+| MVO         | - | -  | -  | - | No flags updated |
+| ADDR        | ✓ | ✓  | ✓  | ✓ | All flags updated |
+| SUBR        | ✓ | ✓  | ✓  | ✓ | All flags updated |
+| INCR        | ✓ | ✓  | ✓  | ✓ | All flags updated |
+| DECR        | ✓ | ✓  | ✓  | ✓ | All flags updated |
+| ANDR        | - | -  | ✓  | ✓ | C/OV unchanged |
+| XORR        | - | -  | ✓  | ✓ | C/OV unchanged |
+| CLRR        | - | -  | 1  | 0 | Always Z=1, S=0 |
+| TSTR        | 0 | 0  | ✓  | ✓ | C/OV cleared |
+| HLT         | - | -  | -  | - | No flags updated |
+
+**Cycle Timing:**
+
+| Instruction | Cycles | Notes |
+|-------------|--------|-------|
+| MOVR        | 6      | |
+| MVI         | 8/10   | 8 normal, 10 with SDBD |
+| MVO         | 11     | |
+| All others  | 6      | ADDR, SUBR, INCR, DECR, ANDR, XORR, CLRR, TSTR |
+| HLT         | 4      | |
+
+**Documentation Created:**
+- ✅ `ai-work/manus/sprint1.4/integration-report.md` (comprehensive, 600+ lines)
+  - Complete integration documentation
+  - Test results comparison
+  - Code quality metrics
+  - Critical test case verification
+  - Next steps for Sprint 1.5
+
+**Key Design Decisions:**
+
+1. **Opcode Naming** - Used register-operation suffixes (INCR, DECR, CLRR, TSTR)
+2. **Import Paths** - Fixed all imports to use `.js` extensions (ES modules requirement)
+3. **Decoder Types** - Reused existing comprehensive decoder.types.ts (116 opcodes)
+4. **Flag Naming** - Maintained uppercase convention (C, OV, Z, S) from Sprint 1.3
+5. **Test Helper** - Kept `createTestInstruction()` helper for cleaner tests
+
+**Impact:**
+
+- ✅ 12 instructions now fully implemented (3 + 9 new)
+- ✅ Complete core instruction set for basic programs
+- ✅ Arithmetic operations with overflow detection
+- ✅ Logic operations with flag management
+- ✅ Test coverage increased 75% (129 → 226 tests)
+- ✅ 94.19% code coverage (exceeds 90% requirement)
+
+**What's Ready for Sprint 1.5:**
+
+- Core arithmetic, logic, and status instructions working
+- Bit-accurate flag calculations validated
+- Comprehensive test suite with edge case coverage
+- Ready for control flow instructions (branches, jumps)
+- Ready for stack operations (PSHR, PULR)
+
+**Next Steps (Sprint 1.5):**
+1. Control flow instructions (B, BC, BNC, BOV, BEQ, BNEQ, etc.)
+2. Jump instructions (J, JSR, JR)
+3. Stack operations (PSHR, PULR with R6 stack pointer)
+4. Memory addressing modes (direct, indirect, auto-increment)
