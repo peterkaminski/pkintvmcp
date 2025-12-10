@@ -89,24 +89,42 @@ We validate pkIntvMCP's behavior against jzIntv to ensure correctness, but they 
 
 ## Current Status
 
-**Sprint 1.2** - Instruction Decoder (In Progress)
+**Sprint 1.4 Complete** - Core Executor with 12 Instructions ✅
 
 We're building this in phases:
 - ✅ **Sprint 1.1**: Documentation and infrastructure complete
-- 🟢 **Sprint 1.2**: Instruction decoder in progress
-- ⏳ **Sprint 1.3**: Core execution engine (next)
-- ⏳ **Sprint 1.4-1.6**: Complete instruction set + validation
+- ✅ **Sprint 1.2**: Instruction decoder complete (116 opcodes)
+- ✅ **Sprint 1.3**: CPU core and executor foundation complete
+- ✅ **Sprint 1.4**: First 12 instructions implemented and tested
+- 🟢 **Sprint 1.5**: Control flow instructions (in progress)
+- ⏳ **Sprint 1.6+**: Complete instruction set + validation
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan.
+**Current Implementation Status:**
+- **CPU Core**: ✅ Complete (8 registers, 4 flags, cycle tracking)
+- **Decoder**: ✅ Complete (116 opcodes, all addressing modes)
+- **Executor**: 🟢 12/50 instructions (24% complete)
+  - Data Movement: MVO, MVI, MVOI
+  - Arithmetic: ADDR, ADDI, SUBR, SUBI, CMPR, CMPI
+  - Logical: ANDR, XORR, COMR
+- **Test Coverage**: 94.19% (226 tests passing)
+
+See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log.md](docs/project-log.md) for detailed progress history.
 
 ### Can I Use It Now?
 
-Not yet! We're still building the core emulator. Check back in a few weeks for an early release, or watch the repo for updates.
+Not yet! We're making rapid progress on the core emulator. The CPU, decoder, and first 12 instructions are working, but we need to complete the remaining ~38 instructions before the MCP interface can be useful for real debugging.
+
+**Estimated Timeline:**
+- Sprint 1.5 (Control Flow): ~1 week
+- Sprint 1.6 (Remaining Instructions): ~2 weeks
+- Phase 2 (Validation & Testing): ~2-3 weeks
+- **First Usable Release**: Approximately 4-6 weeks
 
 If you want to contribute or follow along:
 - Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details
-- See [docs/Sprint-1.2.md](docs/Sprint-1.2.md) for current work
-- Check [docs/WISHLIST.md](docs/WISHLIST.md) for future features
+- See [docs/Sprint-1.5.md](docs/Sprint-1.5.md) for current work
+- Check [docs/project-log.md](docs/project-log.md) for recent progress
+- Review [docs/WISHLIST.md](docs/WISHLIST.md) for future features
 
 ## For AI/MCP Developers
 
