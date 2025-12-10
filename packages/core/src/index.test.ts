@@ -7,7 +7,7 @@ describe('@pkintvmcp/core', () => {
   });
 
   test('exports phase', () => {
-    expect(phase).toBe('1.2-decoder');
+    expect(phase).toBe('1.4-complete-executor');
   });
 
   test('exports Memory class', async () => {

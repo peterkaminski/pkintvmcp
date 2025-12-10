@@ -1,0 +1,19 @@
+
+> @emulator/core@0.1.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90m/home/ubuntu/packages/core[39m
+
+ [32m✓[39m src/utils/__tests__/bitops.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/cpu/__tests__/cpu.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/executor/__tests__/executor.data.test.ts [2m([22m[2m30 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/executor/__tests__/executor.dispatch.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/executor/__tests__/executor.test.ts [2m([22m[2m41 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/cpu/__tests__/cpu.types.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m173 passed[39m[22m[90m (173)[39m
+[2m   Start at [22m 01:33:31
+[2m   Duration [22m 489ms[2m (transform 522ms, setup 0ms, import 754ms, tests 86ms, environment 1ms)[22m
+
