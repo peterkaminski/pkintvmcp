@@ -2,7 +2,8 @@
 
 **Last Updated:** 2025-12-11
 **Current Phase:** Phase 1 - CPU Core
-**Current Sprint:** 1.6 - Remaining Instructions (Planned)
+**Current Sprint:** 1.5.1 (Bonus) - Assembly Examples ✅ COMPLETE
+**Next Sprint:** 1.6 - Remaining Instructions (Planned)
 
 ---
 
@@ -22,7 +23,7 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 **Goal:** CPU-only debugging with comprehensive MCP interface
 
-**Status:** Sprints 1.1-1.5 ✅ COMPLETE | Sprint 1.6 📋 PLANNED
+**Status:** Sprints 1.1-1.5.1 ✅ COMPLETE | Sprint 1.6 📋 PLANNED
 
 ### Sprint 1.1: Foundation & Documentation ✅ COMPLETE
 **Completed:** 2025-12-08
@@ -77,6 +78,20 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 **See:** [Sprint-1.5.md](Sprint-1.5.md) for details
 
 **Outcome:** 23 control flow/stack instructions implemented (branches, jumps, subroutines, stack), 288 tests passing, 92.86% coverage, can execute loops and nested functions
+
+---
+
+### Sprint 1.5.1 (Bonus): CP-1600 Assembly Examples ✅ COMPLETE
+**Completed:** 2025-12-11
+**See:** [Sprint-1.5.1.md](Sprint-1.5.1.md) for details
+
+**Deliverables:**
+- ✅ 6 complete assembly examples (hello-world, counter-loop, subroutine-call, bit-manipulation, signed-math, nested-calls)
+- ✅ Comprehensive documentation (~2,500 lines total)
+- ✅ Execution traces and expected states
+- ✅ Common patterns and pitfalls documented
+
+**Outcome:** Educational examples demonstrating 70% of implemented instructions, ready as test cases for MCP server (Sprint 1.7)
 
 ---
 
