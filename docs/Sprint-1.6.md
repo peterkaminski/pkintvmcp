@@ -43,6 +43,13 @@ Complete the CP-1600 instruction set by implementing the remaining ~15 instructi
 - Control: NOPP, EIS, DIS
 - 288 tests passing, 92.86% coverage
 
+**Sprint 1.5.1 (Bonus)** ✅ (2025-12-11)
+- 6 complete CP-1600 assembly examples (~2,500 lines documentation)
+- Examples: hello-world, counter-loop, subroutine-call, bit-manipulation, signed-math, nested-calls
+- Comprehensive READMEs with execution traces and expected states
+- Ready as test cases for MCP server (Sprint 1.7)
+- **Note:** bit-manipulation example uses Sprint 1.6 instructions (preview)
+
 ### Current Status (Start of Sprint 1.6)
 
 - **CPU Core:** ✅ Complete
@@ -451,10 +458,17 @@ With Sprint 1.6 complete, the executor will have:
 - ✅ 50/50 instructions (100%)
 - ✅ Full CP-1600 instruction set for Phase 1
 - ✅ Ready for Phase 2 validation against jzIntv
+- ✅ All Sprint 1.5.1 examples fully executable (including bit-manipulation)
+
+**Assembly Examples Milestone:**
+Once Sprint 1.6 is complete, all 6 examples from Sprint 1.5.1 will be fully executable:
+- examples/04-bit-manipulation will work with implemented shifts/rotates
+- Complete test suite ready for validation
+- Can run all examples as integration tests
 
 **Next:** Phase 2 will focus on:
 - Sprint 2.1: jzIntv integration and trace comparison
-- Sprint 2.2: Test ROM suite development
+- Sprint 2.2: Test ROM suite development (use Sprint 1.5.1 examples)
 - Sprint 2.3: Bug hunting and edge case handling
 - Sprint 2.4: Comprehensive validation (>99% compatibility)
 
