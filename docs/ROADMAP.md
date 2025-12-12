@@ -1,8 +1,8 @@
 # pkIntvMCP - Roadmap
 
-**Last Updated:** 2025-12-08
+**Last Updated:** 2025-12-11
 **Current Phase:** Phase 1 - CPU Core
-**Current Sprint:** 1.2 - Instruction Decoder
+**Current Sprint:** 1.6 - Remaining Instructions (Planned)
 
 ---
 
@@ -22,10 +22,10 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 **Goal:** CPU-only debugging with comprehensive MCP interface
 
-**Status:** Sprint 1.1 ✅ COMPLETE | Sprint 1.2 ✅ COMPLETE | Sprint 1.3 🟢 IN PROGRESS
+**Status:** Sprints 1.1-1.5 ✅ COMPLETE | Sprint 1.6 📋 PLANNED
 
 ### Sprint 1.1: Foundation & Documentation ✅ COMPLETE
-**Done:** 2025-12-08
+**Completed:** 2025-12-08
 
 **Deliverables:**
 - ✅ PRD.md (v1.2)
@@ -56,38 +56,48 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 ---
 
-### Sprint 1.3: Core Execution Engine 🟢 IN PROGRESS
-**Started:** 2025-12-09
-**See:** [Sprint-1.3.md](Sprint-1.3.md) for detailed tasks
+### Sprint 1.3: Core Execution Engine ✅ COMPLETE
+**Completed:** 2025-12-09
+**See:** [Sprint-1.3.md](Sprint-1.3.md) for details
 
-**Deliverables:**
-- [ ] CPU class (state, registers, flags, PC)
-- [ ] Executor class (instruction execution engine)
-- [ ] Bit-accurate operations (toUint16, flag calculations)
-- [ ] Core instructions: MOVR, MVI, MVO, ADD, ADDR, SUB, SUBR, INC, DEC, AND, ANDR, XOR, XORR, CLR, TST
-- [ ] Proper flag setting (C, OV, Z, S)
-- [ ] Unit tests per instruction (>90% coverage)
-
-**Done When:** Can execute core instructions with correct flag behavior, all unit tests pass
+**Outcome:** CPU class, Executor foundation, and data movement instructions working
 
 ---
 
-### Sprint 1.4: Control Flow & Stack
-**Status:** Planned
+### Sprint 1.4: Arithmetic and Logical Instructions ✅ COMPLETE
+**Completed:** 2025-12-09
+**See:** [Sprint-1.4.md](Sprint-1.4.md) for details
 
-**Deliverables:**
-- [ ] All branch instructions (B, BEQ, BNE, BMI, BPL, etc.)
-- [ ] Jump instructions (J, JR, JSR)
-- [ ] Stack operations (PSHR, PULR, R6 management)
-- [ ] Subroutine linkage
-- [ ] Integration tests with branch/jump sequences
-
-**Done When:** Can execute control flow correctly, integration tests pass
+**Outcome:** 9 arithmetic/logical instructions implemented (ADDR, SUBR, INCR, DECR, ANDR, XORR, CLRR, TSTR, HLT), 226 tests passing, 94.19% coverage
 
 ---
 
-### Sprint 1.5: Basic MCP Server
+### Sprint 1.5: Control Flow and Stack Instructions ✅ COMPLETE
+**Completed:** 2025-12-11
+**See:** [Sprint-1.5.md](Sprint-1.5.md) for details
+
+**Outcome:** 23 control flow/stack instructions implemented (branches, jumps, subroutines, stack), 288 tests passing, 92.86% coverage, can execute loops and nested functions
+
+---
+
+### Sprint 1.6: Remaining Instructions 📋 PLANNED
 **Status:** Planned
+**See:** [Sprint-1.6.md](Sprint-1.6.md) for detailed plan
+
+**Deliverables:**
+- [ ] Shift instructions (SLL, SLLC, SLR, SAR, SARC)
+- [ ] Rotate instructions (RLC, RRC)
+- [ ] Bit manipulation (SWAP, NEGR)
+- [ ] Immediate arithmetic/logic (ADDI, SUBI, ANDI, XORI)
+- [ ] All unit tests (350+ total)
+- [ ] Integration tests for bit manipulation
+
+**Done When:** All 50/50 instructions implemented, Phase 1 complete
+
+---
+
+### Sprint 1.7: Basic MCP Server (Renamed from 1.5)
+**Status:** Planned (after Sprint 1.6)
 
 **Deliverables:**
 - [ ] MCP protocol setup (@modelcontextprotocol/sdk)
@@ -100,8 +110,8 @@ pkIntvMCP is being developed in four major phases, with each phase delivering in
 
 ---
 
-### Sprint 1.6: Debugging Tools
-**Status:** Planned
+### Sprint 1.8: Debugging Tools (Renamed from 1.6)
+**Status:** Planned (after Sprint 1.7)
 
 **Deliverables:**
 - [ ] Address breakpoints (set, clear, list)
