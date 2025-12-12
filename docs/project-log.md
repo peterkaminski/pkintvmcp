@@ -705,3 +705,175 @@ All files      |   94.19 |    82.19 |     100 |   94.03
 2. Jump instructions (J, JSR, JR)
 3. Stack operations (PSHR, PULR with R6 stack pointer)
 4. Memory addressing modes (direct, indirect, auto-increment)
+
+---
+
+## 2025-12-11
+
+### Sprint 1.5: Control Flow and Stack Instructions ✅ COMPLETE
+
+**Status:** COMPLETE
+**Test Results:** 288/288 tests passing (up from 226, +62 tests, +27% increase)
+**Coverage:** 92.86% statements, 100% functions, 75.36% branches
+
+**Sprint Goal Achieved:**
+
+Implemented complete control flow and stack management for the CP-1600 emulator, enabling execution of programs with loops, conditionals, subroutines, and nested function calls.
+
+**New Instructions Implemented (23 total):**
+
+**Unconditional Control Flow (3):**
+1. `B` - Branch Unconditional (7 cycles)
+2. `J` - Jump Absolute (7 cycles)
+3. `JR` - Jump to Register (7 cycles)
+
+**Conditional Branches - Simple Flags (8):**
+4. `BEQ` - Branch if Equal (Z=1) (7/6 cycles)
+5. `BNEQ` - Branch if Not Equal (Z=0) (7/6 cycles)
+6. `BC` - Branch if Carry (C=1) (7/6 cycles)
+7. `BNC` - Branch if No Carry (C=0) (7/6 cycles)
+8. `BOV` - Branch if Overflow (OV=1) (7/6 cycles)
+9. `BNOV` - Branch if No Overflow (OV=0) (7/6 cycles)
+10. `BMI` - Branch if Minus (S=1) (7/6 cycles)
+11. `BPL` - Branch if Plus (S=0) (7/6 cycles)
+
+**Conditional Branches - Signed Comparison (4):**
+12. `BLT` - Branch if Less Than (S XOR OV = 1) (7/6 cycles)
+13. `BGE` - Branch if Greater or Equal (S XOR OV = 0) (7/6 cycles)
+14. `BLE` - Branch if Less or Equal (Z=1 OR (S XOR OV)=1) (7/6 cycles)
+15. `BGT` - Branch if Greater Than (Z=0 AND (S XOR OV)=0) (7/6 cycles)
+
+**Subroutine Instructions (3):**
+16. `JSR` - Jump to Subroutine (12 cycles)
+17. `JSRE` - JSR + Enable Interrupts (12 cycles)
+18. `JSRD` - JSR + Disable Interrupts (12 cycles)
+
+**Stack Instructions (2):**
+19. `PSHR` - Push Register to Stack (11 cycles)
+20. `PULR` - Pull from Stack to Register (11 cycles)
+
+**Control Instructions (3):**
+21. `NOPP` - No Operation (7 cycles)
+22. `EIS` - Enable Interrupt System (6 cycles)
+23. `DIS` - Disable Interrupt System (6 cycles)
+
+**Files Updated:**
+
+1. **`packages/core/src/executor/executor.ts`** (1,198 lines, +726 lines)
+   - Added 23 instruction implementations
+   - Proper PC management (no increment on taken branches)
+   - Branch cycle timing: 7 cycles taken, 6 cycles not taken
+   - Stack operations with upward-growing stack (pre-increment push, post-decrement pop)
+   - Interrupt enable/disable state tracking
+
+2. **`packages/core/src/cpu/cpu.ts`** (158 lines, +7 lines)
+   - Added `interruptsEnabled` field for Phase 3 preparation
+   - Updated constructor, reset, getState, setState
+
+3. **`packages/core/src/cpu/cpu.types.ts`** (32 lines, +1 line)
+   - Added `interruptsEnabled: boolean` to CPUState interface
+
+4. **`packages/core/src/executor/executor.control-flow.test.ts`** (NEW, 1,052 lines, 62 tests)
+   - Comprehensive unit tests for all control flow and stack instructions
+   - Integration tests: loop with counter, nested subroutine calls
+   - Branch taken/not taken cycle verification
+   - Flag preservation verification
+   - Stack push/pull symmetry tests
+
+**Test Coverage:**
+```
+Test Files  10 passed (10)
+     Tests  288 passed (288)
+  Duration  438ms
+
+✓ src/executor/executor.control-flow.test.ts (62 tests) ← NEW
+✓ src/executor/executor.test.ts             (41 tests)
+✓ src/executor/executor.dispatch.test.ts    (26 tests)
+✓ src/executor/executor.data.test.ts        (30 tests)
+✓ src/cpu/cpu.test.ts                       (28 tests)
+✓ src/cpu/cpu.types.test.ts                 (15 tests)
+✓ src/utils/bitops.test.ts                  (33 tests)
+✓ src/memory/memory.test.ts                 (24 tests)
+✓ src/decoder/decoder.test.ts               (24 tests)
+✓ src/index.test.ts                          (5 tests)
+
+Coverage:
+ % Stmts: 92.86% (exceeds 90% target)
+% Branch: 75.36%
+ % Funcs: 100%
+ % Lines: 92.86%
+```
+
+**Critical Implementation Details:**
+
+**PC Management:**
+- Branches/jumps that are taken: Set PC directly, NO increment
+- Branches not taken: Add cycles only (PC incremented by caller)
+- Non-control instructions: Caller increments PC
+
+**Stack Behavior (CP-1600 specific):**
+- Stack grows UPWARD (unusual for most architectures)
+- PSHR: Pre-increment R6, then write to memory[R6]
+- PULR: Read from memory[R6], then post-decrement R6
+- Stack region: 0x02F0-0x0318 (40 words)
+
+**Subroutine Convention:**
+- JSR saves return address in REGISTER (not stack)
+- Return address = PC + 1
+- For nested calls, manually push return register to stack
+- Return with JR instruction
+
+**Signed Comparison Logic:**
+- Uses XOR of Sign and Overflow flags
+- Corrects for overflow affecting sign bit meaning
+- BLT: S XOR OV = 1
+- BGE: S XOR OV = 0
+- BLE: Z=1 OR (S XOR OV)=1
+- BGT: Z=0 AND (S XOR OV)=0
+
+**Integration Tests Verified:**
+
+1. **Loop Test** - Counter loop using DECR + BNEQ:
+   - Executes exactly 5 iterations
+   - Counter reaches zero correctly
+   - Z flag triggers loop exit
+
+2. **Nested Subroutine Test** - Three-level call stack:
+   - Main → Sub1 → Sub2
+   - Sub1 saves R5 to stack before calling Sub2
+   - Sub2 returns to Sub1
+   - Sub1 restores R5 from stack and returns to Main
+   - Stack pointer returns to original value
+
+**Executor Progress:**
+
+**Total Instructions:** 35/~50 (70%)
+- Sprint 1.3: 3 data movement (MOVR, MVI, MVO)
+- Sprint 1.4: 9 arithmetic/logical (ADDR, SUBR, INCR, DECR, ANDR, XORR, CLRR, TSTR, HLT)
+- Sprint 1.5: 23 control flow/stack
+- **Remaining:** ~15 instructions (shifts, rotates, immediate variants, SDBD handling)
+
+**Impact:**
+
+- ✅ Complete control flow capabilities
+- ✅ Subroutine calls with register-based return addresses
+- ✅ Stack operations for nested calls and local storage
+- ✅ All conditional branch variations (flags, signed comparison)
+- ✅ Interrupt enable/disable infrastructure (ready for Phase 3)
+- ✅ Test coverage maintained above 90% threshold
+- ✅ Can execute meaningful programs (loops, functions, conditionals)
+
+**What's Ready for Sprint 1.6:**
+
+- 70% of CP-1600 instruction set implemented
+- Complete control flow and subroutine support
+- Stack operations working correctly
+- Ready for remaining instructions (shifts, rotates, immediate forms)
+- Test infrastructure mature and comprehensive
+
+**Next Steps (Sprint 1.6):**
+1. Shift instructions (SLL, SLR, SAR, RLC, RRC)
+2. Immediate arithmetic/logic (ADDI, SUBI, CMPI, ANDI, XORI)
+3. SDBD prefix handling for 16-bit immediate values
+4. Remaining addressing mode variants
+5. Complete instruction set to ~50/50 (100%)

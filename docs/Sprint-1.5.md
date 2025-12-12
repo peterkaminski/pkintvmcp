@@ -1,7 +1,8 @@
 # Sprint 1.5: Control Flow and Stack Instructions
 
-**Status:** 🟢 IN PROGRESS
+**Status:** ✅ COMPLETE
 **Started:** 2025-12-10
+**Completed:** 2025-12-11
 **Branch:** `pkma-sprint1.5-2025-12-10`
 
 ---
@@ -335,52 +336,52 @@ class MockMemory implements Memory {
 ### Task List
 
 #### Control Flow - Unconditional
-- [ ] B - Branch Unconditional
-- [ ] J - Jump Absolute
-- [ ] JR - Jump to Register
+- [x] B - Branch Unconditional
+- [x] J - Jump Absolute
+- [x] JR - Jump to Register
 
 #### Control Flow - Conditional (Simple)
-- [ ] BEQ - Branch if Equal
-- [ ] BNEQ - Branch if Not Equal
-- [ ] BC - Branch if Carry
-- [ ] BNC - Branch if No Carry
-- [ ] BOV - Branch if Overflow
-- [ ] BNOV - Branch if No Overflow
-- [ ] BMI - Branch if Minus
-- [ ] BPL - Branch if Plus
+- [x] BEQ - Branch if Equal
+- [x] BNEQ - Branch if Not Equal
+- [x] BC - Branch if Carry
+- [x] BNC - Branch if No Carry
+- [x] BOV - Branch if Overflow
+- [x] BNOV - Branch if No Overflow
+- [x] BMI - Branch if Minus
+- [x] BPL - Branch if Plus
 
 #### Control Flow - Signed Comparison
-- [ ] BLT - Branch if Less Than
-- [ ] BGE - Branch if Greater or Equal
-- [ ] BLE - Branch if Less or Equal
-- [ ] BGT - Branch if Greater Than
+- [x] BLT - Branch if Less Than
+- [x] BGE - Branch if Greater or Equal
+- [x] BLE - Branch if Less or Equal
+- [x] BGT - Branch if Greater Than
 
 #### Subroutines
-- [ ] JSR - Jump to Subroutine
-- [ ] JSRE - JSR + Enable Interrupts
-- [ ] JSRD - JSR + Disable Interrupts
+- [x] JSR - Jump to Subroutine
+- [x] JSRE - JSR + Enable Interrupts
+- [x] JSRD - JSR + Disable Interrupts
 
 #### Stack
-- [ ] Memory interface added
-- [ ] PSHR - Push Register
-- [ ] PULR - Pull Register
+- [x] Memory interface added (already present from Sprint 1.4)
+- [x] PSHR - Push Register
+- [x] PULR - Pull Register
 
-#### Control Instructions (Optional)
-- [ ] NOPP - No Operation
-- [ ] HLT - Halt Processor
-- [ ] EIS - Enable Interrupts
-- [ ] DIS - Disable Interrupts
+#### Control Instructions
+- [x] NOPP - No Operation
+- [x] HLT - Halt Processor (already present)
+- [x] EIS - Enable Interrupts
+- [x] DIS - Disable Interrupts
 
 #### Testing
-- [ ] Unit tests for all instructions
-- [ ] Loop integration test
-- [ ] Nested subroutine integration test
-- [ ] Coverage >90%
+- [x] Unit tests for all instructions (62 new tests)
+- [x] Loop integration test
+- [x] Nested subroutine integration test
+- [x] Coverage >90% (achieved 92.86%)
 
 #### Documentation
-- [ ] project-log.md updated
+- [x] project-log.md updated
 - [ ] index.ts phase marker updated
-- [ ] This Sprint-1.5.md updated
+- [x] This Sprint-1.5.md updated
 
 ---
 
@@ -430,7 +431,53 @@ class MockMemory implements Memory {
 
 ---
 
-**Last Updated:** 2025-12-10 by Claude Code
+## Sprint Completion Summary
+
+**Completed:** 2025-12-11
+
+### Deliverables Achieved
+
+✅ **23 Instructions Implemented:**
+- 3 unconditional control flow: B, J, JR
+- 8 conditional branches (simple flags): BEQ, BNEQ, BC, BNC, BOV, BNOV, BMI, BPL
+- 4 signed comparison branches: BLT, BGE, BLE, BGT
+- 3 subroutine instructions: JSR, JSRE, JSRD
+- 2 stack instructions: PSHR, PULR
+- 3 control instructions: NOPP, EIS, DIS
+
+✅ **Test Coverage:**
+- 62 new unit tests added
+- 288 total tests passing
+- 92.86% statement coverage (target: >90%)
+- 100% function coverage
+- Comprehensive integration tests for loops and nested subroutines
+
+✅ **Key Features:**
+- Full control flow support (branches, jumps, subroutines)
+- Stack operations with upward-growing stack (R6)
+- Interrupt enable/disable tracking (ready for Phase 3)
+- Proper PC management (no increment on taken branches)
+- Correct cycle timing for all instructions
+
+### Executor Progress
+
+**Total Instructions:** 35/50 (70%)
+- Sprint 1.3: 3 data movement instructions
+- Sprint 1.4: 9 arithmetic/logical instructions
+- Sprint 1.5: 23 control flow/stack instructions
+- Remaining: ~15 instructions (shifts, rotates, SDBD-prefixed variants)
+
+### Next Steps
+
+Sprint 1.6 will implement remaining instructions:
+- Shift instructions: SLL, SLR, SAR, RLC, RRC
+- Immediate forms: ADDI, SUBI, CMPI, ANDI, XORI
+- Additional addressing modes
+- SDBD prefix handling for 16-bit immediates
+
+---
+
+**Last Updated:** 2025-12-11 by Claude Code
 
 **See Also:**
 - [Sprint-1.4.md](Sprint-1.4.md) - Previous sprint
