@@ -21,6 +21,7 @@ export interface CPUState {
   cycles: number;
   halted: boolean;
   sdbd: boolean;
+  interruptsEnabled: boolean;
 }
 
 /**

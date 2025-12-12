@@ -11,7 +11,6 @@ export class CPU {
   private cycles: number;
   private halted: boolean;
   private sdbd: boolean;
-  private interruptsEnabled: boolean;
 
   constructor() {
     this.registers = new Uint16Array(8);
@@ -24,7 +23,6 @@ export class CPU {
     this.cycles = 0;
     this.halted = false;
     this.sdbd = false;
-    this.interruptsEnabled = false;
   }
 
   /**
@@ -104,7 +102,6 @@ export class CPU {
     this.cycles = 0;
     this.halted = false;
     this.sdbd = false;
-    this.interruptsEnabled = false;
   }
 
   /**
@@ -122,7 +119,6 @@ export class CPU {
       cycles: this.cycles,
       halted: this.halted,
       sdbd: this.sdbd,
-      interruptsEnabled: this.interruptsEnabled,
     };
   }
 
@@ -140,7 +136,6 @@ export class CPU {
     this.cycles = state.cycles;
     this.halted = state.halted;
     this.sdbd = state.sdbd;
-    this.interruptsEnabled = state.interruptsEnabled;
   }
 
   /**
