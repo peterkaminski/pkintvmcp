@@ -89,7 +89,7 @@ We validate pkIntvMCP's behavior against jzIntv to ensure correctness, but they 
 
 ## Current Status
 
-**Sprint 1.5 Complete** - Control Flow and Stack Instructions ✅
+**Sprint 1.5.1 Complete** - Assembly Examples (Bonus) ✅
 
 We're building this in phases:
 - ✅ **Sprint 1.1**: Documentation and infrastructure complete
@@ -97,6 +97,7 @@ We're building this in phases:
 - ✅ **Sprint 1.3**: CPU core and executor foundation complete
 - ✅ **Sprint 1.4**: Arithmetic and logical instructions (12 total)
 - ✅ **Sprint 1.5**: Control flow and stack instructions (35 total)
+- ✅ **Sprint 1.5.1**: 6 CP-1600 assembly examples (~2,500 lines documentation)
 - 📋 **Sprint 1.6**: Remaining instructions (shifts, rotates, immediate forms)
 - ⏳ **Phase 2**: Validation against jzIntv reference emulator
 
@@ -122,6 +123,19 @@ We're building this in phases:
 - ✅ Signed comparisons
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log.md](docs/project-log.md) for detailed progress history.
+
+### Assembly Examples
+
+The [examples/](examples/) directory contains 6 complete, well-documented CP-1600 assembly programs:
+
+- **[01-hello-world](examples/01-hello-world/)** - Basic operations (15 lines)
+- **[02-counter-loop](examples/02-counter-loop/)** - Loop with conditional branch (20 lines)
+- **[03-subroutine-call](examples/03-subroutine-call/)** - JSR/JR calling convention (25 lines)
+- **[04-bit-manipulation](examples/04-bit-manipulation/)** - Shifts, rotates, masking (30 lines)
+- **[05-signed-math](examples/05-signed-math/)** - Signed comparisons and overflow (35 lines)
+- **[06-nested-calls](examples/06-nested-calls/)** - Stack management with PSHR/PULR (45 lines)
+
+Each example includes comprehensive documentation (~250-400 lines) with execution traces, expected states, common patterns, and pitfalls. Perfect for learning CP-1600 programming or as test cases for the MCP server.
 
 ### Can I Use It Now?
 
