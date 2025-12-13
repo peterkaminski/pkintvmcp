@@ -103,7 +103,7 @@ Complete the CP-1600 instruction set by implementing the remaining ~15 instructi
 ### Documentation
 
 - Update this Sprint-1.6.md with progress
-- Update project-log.md upon completion
+- Update project-log/ upon completion
 - Update README.md and ROADMAP.md
 - Update index.ts phase marker to "1.6-complete-instruction-set"
 
@@ -336,7 +336,7 @@ Each instruction needs:
 - [x] Cycle timing correct for all instructions
 - [x] SDBD prefix handling validated
 - [x] Testing documentation created (docs/testing-guide.md)
-- [ ] Documentation updated (project-log.md, README.md, ROADMAP.md) - In progress
+- [ ] Documentation updated (project-log/, README.md, ROADMAP.md) - In progress
 
 ### Quality Metrics ✅
 
@@ -426,7 +426,7 @@ Each instruction needs:
 - [x] testing-guide.md created
 - [x] CLAUDE.md updated
 - [x] This Sprint-1.6.md updated
-- [ ] project-log.md updated
+- [ ] project-log/ updated
 - [ ] README.md updated
 - [ ] ROADMAP.md updated
 
@@ -494,4 +494,4 @@ Once Sprint 1.6 is complete, all 6 examples from Sprint 1.5.1 will be fully exec
 **See Also:**
 - [Sprint-1.5.md](Sprint-1.5.md) - Previous sprint
 - [ROADMAP.md](ROADMAP.md) - Overall project plan
-- [project-log.md](project-log.md) - Historical progress
+- [project-log/](project-log/) - Historical progress

@@ -195,11 +195,11 @@ git push --force origin main
 2. **Clean Working Tree**: Ensure `git status` is clean before starting
 3. **Descriptive Messages**: Tag messages should explain what's being integrated
 4. **Consistent Naming**: Follow naming conventions for easy filtering
-5. **Document Changes**: Update project-log.md as part of merge commit
+5. **Document Changes**: Create project log entry in docs/project-log/ as part of merge commit
 6. **Verify Success**: Always verify merge, tags, and tests after completion
 
 ## Related Documentation
 
 - **docs/PROJECT_SETUP.md**: Repository structure and setup
-- **docs/project-log.md**: Historical record of changes
+- **docs/project-log/**: Historical record of changes (one entry per file)
 - **docs/ROADMAP.md**: Sprint planning and milestones

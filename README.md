@@ -129,7 +129,7 @@ We're building this in phases:
 - ✅ Bit manipulation (shifts, rotates, byte swapping)
 - ✅ All Sprint 1.5.1 assembly examples fully executable
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log.md](docs/project-log.md) for detailed progress history.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log/](docs/project-log/) for detailed progress history.
 
 ### Assembly Examples
 
@@ -157,7 +157,7 @@ Almost! The CPU core and complete Phase 1 instruction set (51/51 instructions) a
 If you want to contribute or follow along:
 - Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details
 - See [docs/Sprint-1.7.md](docs/Sprint-1.7.md) for next sprint plan
-- Check [docs/project-log.md](docs/project-log.md) for recent progress
+- Check [docs/project-log/](docs/project-log/) for recent progress
 - Review [docs/WISHLIST.md](docs/WISHLIST.md) for future features
 
 ## For AI/MCP Developers

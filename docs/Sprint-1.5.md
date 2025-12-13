@@ -79,7 +79,7 @@ Implement control flow (branches, jumps, subroutines) and stack management (PSHR
 ### Documentation
 
 - Update this Sprint-1.5.md with progress
-- Update project-log.md upon completion
+- Update project-log/ upon completion
 - Update index.ts phase marker
 
 ---
@@ -282,7 +282,7 @@ class MockMemory implements Memory {
 - [ ] Test coverage >90% (target 95%+)
 - [ ] No TypeScript errors
 - [ ] Cycle timing correct for all instructions
-- [ ] Documentation updated (project-log.md, index.ts)
+- [ ] Documentation updated (project-log/, index.ts)
 
 ### Quality Metrics
 
@@ -379,7 +379,7 @@ class MockMemory implements Memory {
 - [x] Coverage >90% (achieved 92.86%)
 
 #### Documentation
-- [x] project-log.md updated
+- [x] project-log/ updated
 - [ ] index.ts phase marker updated
 - [x] This Sprint-1.5.md updated
 
@@ -482,4 +482,4 @@ Sprint 1.6 will implement remaining instructions:
 **See Also:**
 - [Sprint-1.4.md](Sprint-1.4.md) - Previous sprint
 - [ROADMAP.md](ROADMAP.md) - Overall project plan
-- [project-log.md](project-log.md) - Historical progress
+- [project-log/](project-log/) - Historical progress

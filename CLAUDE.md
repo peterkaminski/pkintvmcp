@@ -135,7 +135,7 @@ Sessions: Multiple simultaneous debugging sessions with isolation
 - **docs/PROJECT_SETUP.md**: Repository structure, build system, testing strategy
 - **docs/USER_GUIDE.md**: Provisional user documentation (workflows, examples)
 - **docs/resources-guide.md**: Guide to resources/ folder reference materials
-- **docs/project-log.md**: Chronological project log
+- **docs/project-log/**: Chronological project log (one entry per file)
 
 ### Project Tracking Documents (in docs/)
 
@@ -201,11 +201,11 @@ The `resources/` folder contains background materials with different copyright r
 4. **Read docs/resources-guide.md**: Reference materials and when to use them
 5. **Check docs/Sprint-N.md**: Current sprint tasks and progress
 6. **Follow sprint plan**: Implement, test, document, iterate
-7. **Update docs/project-log.md**: Document significant progress, decisions, completions
+7. **Update docs/project-log/**: Document significant progress, decisions, completions
 
 ### Maintaining the Project Log
 
-**IMPORTANT**: Update `docs/project-log.md` regularly to maintain project history.
+**IMPORTANT**: Update `docs/project-log/` regularly to maintain project history.
 
 **When to add entries:**
 - Sprint completions or major milestones
@@ -216,7 +216,14 @@ The `resources/` folder contains background materials with different copyright r
 - Documentation reorganizations or updates
 
 **Entry format:**
+
+Each entry is a separate file: `docs/project-log/project-log-entry-YYYY-MM-DD-NNN.md`
+
+Start with the date as a level 2 heading, then add level 3 headings for each accomplishment:
+
 ```markdown
+## YYYY-MM-DD
+
 ### [Feature/Task Name] ✅/🟢/🟡 [Status]
 
 Brief description of what was done.
@@ -231,7 +238,9 @@ Brief description of what was done.
 - What it enables next
 ```
 
-**Commit frequency**: Update and commit the project log at good checkpoints (end of task, end of day, after major work).
+**Commit frequency**: Create and commit new project log entries at good checkpoints (end of task, end of day, after major work).
+
+**File naming**: Use `project-log-entry-YYYY-MM-DD-NNN.md` where NNN is the next sequential number (e.g., `project-log-entry-2025-12-12-000.md`). See `docs/project-log/README.md` for details.
 
 ## Non-Goals
 

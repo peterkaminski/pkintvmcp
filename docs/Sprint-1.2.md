@@ -407,7 +407,7 @@ console.log(instruction.operands[1].value);  // 42
 ### Documentation Complete
 - [x] Public APIs have JSDoc comments
 - [x] Code has inline documentation
-- [x] Design decisions documented (project-log.md)
+- [x] Design decisions documented (project-log/)
 - [ ] README usage examples (could be expanded)
 - [ ] ARCHITECTURE.md update (if needed)
 

@@ -881,7 +881,7 @@ console.log(cpu.getFlags().zero);  // false
 - [ ] Usage examples in README
 - [ ] Flag calculation documented
 - [ ] ARCHITECTURE.md updated
-- [ ] project-log.md updated with progress
+- [ ] project-log/ updated with progress
 
 ---
 
