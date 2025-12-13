@@ -3,6 +3,114 @@
 Note: Maintain the entries below in chronological order.
 
 ## 2025-12-12
+### Sprint 1.6.1: Auto-Increment Instructions ✅ COMPLETE
+
+**Branch:** `pkcc-sprint1-6-2025-12-12`
+
+**Status:** ✅ Complete (Phase 1 instruction set 100% achieved)
+
+**Missing Instructions Identified and Implemented:**
+
+After Sprint 1.6 completion (49/50 instructions), analysis revealed 2 missing opcodes:
+- **MVI@** (Move from memory with auto-increment)
+- **MVO@** (Move to memory with auto-increment)
+
+These auto-increment addressing mode variants provide efficient array/buffer operations with automatic pointer advancement.
+
+**Implementation Accomplishments:**
+
+1. **MVI@ Implementation** (`executor.ts:315-344`)
+   - Operation: `Rdst = memory[Rptr]; Rptr = Rptr + 1`
+   - Flags: Z, S updated based on loaded value
+   - Cycles: 8 (Phase 1, ignoring wait states)
+   - Use case: Loading sequential data from memory
+
+2. **MVO@ Implementation** (`executor.ts:353-379`)
+   - Operation: `memory[Rptr] = Rsrc; Rptr = Rptr + 1`
+   - Flags: None updated
+   - Cycles: 9 (Phase 1, ignoring wait states)
+   - Use case: Storing sequential data to memory
+
+**Testing Accomplishments:**
+
+- **Test File**: `executor.autoincrement.test.ts` (NEW, 10 tests)
+- **Test Coverage**:
+  - MVI@ basic load and auto-increment (5 tests)
+  - MVO@ basic store and auto-increment (4 tests)
+  - Integration test: array copying using MVI@/MVO@ (1 test)
+- **Edge Cases Verified**:
+  - Zero value loading (Z flag set)
+  - Negative value loading (S flag set)
+  - Pointer wraparound (0xFFFF → 0x0000)
+  - Multiple consecutive loads/stores
+  - Flag preservation for MVO@ (no flags modified)
+
+**Test Results:**
+```bash
+npm test → 342 tests passing (up from 332, +10 new)
+npx vitest run --coverage:
+  - Line Coverage: 92.88%
+  - Branch Coverage: 74.88%
+  - All tests passing
+```
+
+**Documentation Created:**
+
+1. **[SLL-walkthrough.md](SLL-walkthrough.md)** (NEW, 500+ lines)
+   - Complete implementation walkthrough for SLL instruction
+   - Step-by-step code analysis with bit-level visualizations
+   - Test walkthrough with 4 detailed examples
+   - Key concepts (shifting vs rotation, flag semantics)
+   - Common pitfalls with solutions
+   - Testing best practices for bit manipulation
+
+2. **[Sprint-1.7.md](Sprint-1.7.md)** (NEW, comprehensive)
+   - Complete MCP server implementation plan
+   - 12 core MCP tools specified
+   - Simple CLI test runner design
+   - Session management architecture
+   - Integration with Sprint 1.5.1 examples
+   - Tool specifications with examples
+
+**Phase 1 Milestone Achieved:**
+
+- **Total Instructions**: 51/51 (102% of original 50-instruction target)
+- **All Sprint 1.5.1 Examples Now Executable**
+- **Ready for Sprint 1.7**: MCP Server implementation
+
+**Files Modified/Created:**
+
+1. `packages/core/src/executor/executor.ts`
+   - Added MVI@ implementation (lines 315-344)
+   - Added MVO@ implementation (lines 353-379)
+   - Updated opcode dispatch switch
+
+2. `packages/core/src/executor/executor.autoincrement.test.ts` (NEW, 10 tests)
+
+3. `docs/SLL-walkthrough.md` (NEW, 500+ lines)
+
+4. `docs/Sprint-1.7.md` (NEW, comprehensive MCP server plan)
+
+5. `README.md` (updated with current status)
+
+**Build & Test Status:**
+```bash
+npm run build  → 2 successful, 2 total
+npm test       → 342 tests passing (13 test files)
+Coverage       → 92.88% line, 74.88% branch, 100% function
+```
+
+**Impact:**
+
+- ✅ Phase 1 instruction set 100% complete (51/51 instructions)
+- ✅ Exceeded original 50-instruction target by 2%
+- ✅ All Sprint 1.5.1 examples fully executable
+- ✅ Comprehensive testing documentation created
+- ✅ MCP server implementation plan complete
+- ✅ Ready for Sprint 1.7: MCP Server implementation
+
+---
+
 
 ### Sprint 1.6: Remaining Instructions - Shifts, Rotates, and Immediate Forms ✅ COMPLETE
 

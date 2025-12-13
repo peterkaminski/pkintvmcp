@@ -36,8 +36,14 @@ export class Executor {
       case Opcode.MVI:
         this.executeMvi(instruction);
         break;
+      case Opcode.MVI_AT:
+        this.executeMviAt(instruction);
+        break;
       case Opcode.MVO:
         this.executeMvo(instruction);
+        break;
+      case Opcode.MVO_AT:
+        this.executeMvoAt(instruction);
         break;
 
       // Arithmetic
@@ -296,6 +302,79 @@ export class Executor {
 
     if (this.options.trace) {
       console.log(`MVO R${src} -> [${addr.toString(16)}]: value=${value.toString(16)}`);
+    }
+  }
+
+  /**
+   * MVI@ - Move from memory with auto-increment
+   * Format: MVI@ Rptr, Rdst
+   * Operation: Rdst = memory[Rptr]; Rptr = Rptr + 1
+   * Flags: Z, S updated
+   * Cycles: 8 + 2W (using 8 for Phase 1)
+   */
+  private executeMviAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const value = this.memory.read(address);
+
+    // Write to destination register
+    this.cpu.setRegister(dst, value);
+
+    // Auto-increment pointer register
+    this.cpu.setRegister(ptrReg, toUint16(address + 1));
+
+    // Update flags: S and Z only
+    const Z = value === 0;
+    const S = getBit(value, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Add cycles: 8 base (ignoring W for Phase 1)
+    this.cpu.addCycles(8);
+
+    if (this.options.trace) {
+      console.log(
+        `MVI@ R${ptrReg}[@${address.toString(16)}] -> R${dst}: value=${value.toString(16)}, R${ptrReg}++`
+      );
+    }
+  }
+
+  /**
+   * MVO@ - Move to memory with auto-increment
+   * Format: MVO@ Rsrc, Rptr
+   * Operation: memory[Rptr] = Rsrc; Rptr = Rptr + 1
+   * Flags: None updated
+   * Cycles: 9 + 2W (using 9 for Phase 1)
+   */
+  private executeMvoAt(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const ptrReg = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read source register
+    const value = this.cpu.getRegister(src);
+
+    // Write to memory
+    this.memory.write(address, value);
+
+    // Auto-increment pointer register
+    this.cpu.setRegister(ptrReg, toUint16(address + 1));
+
+    // No flags updated for MVO@
+
+    // Add cycles: 9 base (ignoring W for Phase 1)
+    this.cpu.addCycles(9);
+
+    if (this.options.trace) {
+      console.log(
+        `MVO@ R${src} -> [@${address.toString(16)}] (R${ptrReg}): value=${value.toString(16)}, R${ptrReg}++`
+      );
     }
   }
 

@@ -89,7 +89,7 @@ We validate pkIntvMCP's behavior against jzIntv to ensure correctness, but they 
 
 ## Current Status
 
-**Sprint 1.5.1 Complete** - Assembly Examples (Bonus) ✅
+**Sprint 1.6.1 Complete** - Phase 1 Instruction Set 100% ✅
 
 We're building this in phases:
 - ✅ **Sprint 1.1**: Documentation and infrastructure complete
@@ -98,22 +98,27 @@ We're building this in phases:
 - ✅ **Sprint 1.4**: Arithmetic and logical instructions (12 total)
 - ✅ **Sprint 1.5**: Control flow and stack instructions (35 total)
 - ✅ **Sprint 1.5.1**: 6 CP-1600 assembly examples (~2,500 lines documentation)
-- 📋 **Sprint 1.6**: Remaining instructions (shifts, rotates, immediate forms)
+- ✅ **Sprint 1.6**: Shifts, rotates, and immediate forms (14 instructions)
+- ✅ **Sprint 1.6.1**: Auto-increment instructions (MVI@, MVO@)
+- 📋 **Sprint 1.7**: Basic MCP Server (execution control, state inspection)
 - ⏳ **Phase 2**: Validation against jzIntv reference emulator
 
 **Current Implementation Status:**
 - **CPU Core**: ✅ Complete (8 registers, 4 flags, cycle tracking, interrupt enable)
 - **Decoder**: ✅ Complete (116 opcodes, all addressing modes)
-- **Executor**: ✅ 35/50 instructions (70% complete)
-  - Data Movement: MOVR, MVI, MVO
-  - Arithmetic: ADDR, SUBR, INCR, DECR
-  - Logical: ANDR, XORR, CLRR
-  - Status: TSTR, HLT
+- **Executor**: ✅ 51/51 instructions (100% Phase 1 complete!)
+  - Data Movement: MOVR, MVI, MVO, MVI@, MVO@
+  - Arithmetic: ADDR, SUBR, INCR, DECR, ADD, SUB
+  - Logical: ANDR, XORR, CLRR, AND, XOR
+  - Comparison: TSTR, CMP
+  - Control: HLT, NOPP, EIS, DIS
   - Control Flow: B, J, JR, BEQ, BNEQ, BC, BNC, BOV, BNOV, BMI, BPL, BLT, BGE, BLE, BGT
   - Subroutines: JSR, JSRE, JSRD
   - Stack: PSHR, PULR
-  - Control: NOPP, EIS, DIS
-- **Test Coverage**: 92.86% (288 tests passing)
+  - Shifts: SLL, SLLC, SLR, SAR, SARC
+  - Rotates: RLC, RRC
+  - Bit Manipulation: SWAP, NEGR
+- **Test Coverage**: 92.88% (342 tests passing)
 
 **What's Working:**
 - ✅ Loops with counters
@@ -121,6 +126,8 @@ We're building this in phases:
 - ✅ Subroutine calls with stack
 - ✅ Nested function calls
 - ✅ Signed comparisons
+- ✅ Bit manipulation (shifts, rotates, byte swapping)
+- ✅ All Sprint 1.5.1 assembly examples fully executable
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log.md](docs/project-log.md) for detailed progress history.
 
@@ -139,16 +146,17 @@ Each example includes comprehensive documentation (~250-400 lines) with executio
 
 ### Can I Use It Now?
 
-Not yet, but we're getting close! The CPU core is complete and 70% of instructions are working. We can already execute meaningful programs with loops, conditionals, and function calls. We need to finish the remaining ~15 instructions (shifts, rotates, immediate forms) and validate against jzIntv before the MCP interface is ready for real debugging.
+Almost! The CPU core and complete Phase 1 instruction set (51/51 instructions) are implemented and tested. All Sprint 1.5.1 assembly examples are now fully executable. We need to implement the MCP server interface and validate against jzIntv before the tool is ready for real debugging.
 
 **What's Left:**
-- Sprint 1.6: Remaining instructions (~15 instructions, ~1 week)
-- Phase 2: jzIntv validation and testing (~2-3 weeks)
-- **First Usable Release**: Approximately 3-4 weeks
+- Sprint 1.7: Basic MCP Server (execution control, state inspection)
+- Sprint 1.8: Debugging Tools (breakpoints, trace, run_until)
+- Phase 2: jzIntv validation and testing
+- **First Usable Release**: Approximately 2-3 weeks
 
 If you want to contribute or follow along:
 - Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details
-- See [docs/Sprint-1.6.md](docs/Sprint-1.6.md) for current plan
+- See [docs/Sprint-1.7.md](docs/Sprint-1.7.md) for next sprint plan
 - Check [docs/project-log.md](docs/project-log.md) for recent progress
 - Review [docs/WISHLIST.md](docs/WISHLIST.md) for future features
 
