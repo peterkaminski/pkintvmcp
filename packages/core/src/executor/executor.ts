@@ -44,8 +44,14 @@ export class Executor {
       case Opcode.ADDR:
         this.executeAddr(instruction);
         break;
+      case Opcode.ADD:
+        this.executeAdd(instruction);
+        break;
       case Opcode.SUBR:
         this.executeSubr(instruction);
+        break;
+      case Opcode.SUB:
+        this.executeSub(instruction);
         break;
       case Opcode.INCR:
         this.executeIncr(instruction);
@@ -58,8 +64,14 @@ export class Executor {
       case Opcode.ANDR:
         this.executeAndr(instruction);
         break;
+      case Opcode.AND:
+        this.executeAnd(instruction);
+        break;
       case Opcode.XORR:
         this.executeXorr(instruction);
+        break;
+      case Opcode.XOR:
+        this.executeXor(instruction);
         break;
       case Opcode.CLRR:
         this.executeClrr(instruction);
@@ -68,6 +80,9 @@ export class Executor {
       // Control
       case Opcode.TSTR:
         this.executeTstr(instruction);
+        break;
+      case Opcode.CMP:
+        this.executeCmp(instruction);
         break;
       case Opcode.HLT:
         this.executeHlt(instruction);
@@ -152,6 +167,39 @@ export class Executor {
         break;
       case Opcode.DIS:
         this.executeDIS(instruction);
+        break;
+
+      // Shift Instructions
+      case Opcode.SLL:
+        this.executeSLL(instruction);
+        break;
+      case Opcode.SLLC:
+        this.executeSLLC(instruction);
+        break;
+      case Opcode.SLR:
+        this.executeSLR(instruction);
+        break;
+      case Opcode.SAR:
+        this.executeSAR(instruction);
+        break;
+      case Opcode.SARC:
+        this.executeSARC(instruction);
+        break;
+
+      // Rotate Instructions
+      case Opcode.RLC:
+        this.executeRLC(instruction);
+        break;
+      case Opcode.RRC:
+        this.executeRRC(instruction);
+        break;
+
+      // Bit Manipulation
+      case Opcode.SWAP:
+        this.executeSWAP(instruction);
+        break;
+      case Opcode.NEGR:
+        this.executeNEGR(instruction);
         break;
 
       default:
@@ -1135,6 +1183,533 @@ export class Executor {
 
     if (this.options.trace) {
       console.log('DIS - Interrupts disabled');
+    }
+  }
+
+  // ========== Shift Instructions ==========
+
+  /**
+   * SLL - Shift Logical Left
+   * Format: SLL Rdst
+   * Operation: R ← R << 1, bit 0 ← 0, C ← old bit 15
+   * Flags: C (bit shifted out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeSLL(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // Capture bit 15 before shift (goes to carry)
+    const carryOut = getBit(value, 15) === 1;
+
+    // Shift left by 1 (bit 0 becomes 0)
+    const result = toUint16(value << 1);
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: carryOut,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`SLL R${dst}: ${value.toString(16)} << 1 = ${result.toString(16)}, C=${carryOut}`);
+    }
+  }
+
+  /**
+   * SLLC - Shift Logical Left through Carry
+   * Format: SLLC Rdst
+   * Operation: R ← R << 1, bit 0 ← C, C ← old bit 15
+   * Flags: C (bit shifted out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeSLLC(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+    const flags = this.cpu.getFlags();
+
+    // Capture current carry and bit 15
+    const oldCarry = flags.C ? 1 : 0;
+    const carryOut = getBit(value, 15) === 1;
+
+    // Shift left by 1, insert old carry at bit 0
+    const result = toUint16((value << 1) | oldCarry);
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: carryOut,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(
+        `SLLC R${dst}: ${value.toString(16)} << 1 | ${oldCarry} = ${result.toString(16)}, C=${carryOut}`
+      );
+    }
+  }
+
+  /**
+   * SLR - Shift Logical Right
+   * Format: SLR Rdst
+   * Operation: R ← R >> 1, bit 15 ← 0, C ← old bit 0
+   * Flags: C (bit shifted out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeSLR(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // Capture bit 0 before shift (goes to carry)
+    const carryOut = getBit(value, 0) === 1;
+
+    // Shift right by 1 (bit 15 becomes 0)
+    const result = value >>> 1; // Unsigned right shift
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: carryOut,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`SLR R${dst}: ${value.toString(16)} >> 1 = ${result.toString(16)}, C=${carryOut}`);
+    }
+  }
+
+  /**
+   * SAR - Shift Arithmetic Right
+   * Format: SAR Rdst
+   * Operation: R ← R >> 1, bit 15 ← old bit 15 (sign extend), C ← old bit 0
+   * Flags: C (bit shifted out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeSAR(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // Capture bit 0 before shift (goes to carry)
+    const carryOut = getBit(value, 0) === 1;
+
+    // Capture sign bit (bit 15)
+    const signBit = getBit(value, 15);
+
+    // Shift right by 1
+    let result = value >>> 1;
+
+    // Preserve sign bit (bit 15)
+    if (signBit === 1) {
+      result = result | 0x8000;
+    }
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: carryOut,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`SAR R${dst}: ${value.toString(16)} >> 1 = ${result.toString(16)}, C=${carryOut}`);
+    }
+  }
+
+  /**
+   * SARC - Shift Arithmetic Right through Carry
+   * Format: SARC Rdst
+   * Operation: R ← R >> 1, bit 15 ← C, C ← old bit 0
+   * Flags: C (bit shifted out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeSARC(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+    const flags = this.cpu.getFlags();
+
+    // Capture current carry and bit 0
+    const oldCarry = flags.C ? 1 : 0;
+    const carryOut = getBit(value, 0) === 1;
+
+    // Shift right by 1, insert old carry at bit 15
+    const result = toUint16((value >>> 1) | (oldCarry << 15));
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: carryOut,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(
+        `SARC R${dst}: ${value.toString(16)} >> 1 | ${oldCarry << 15} = ${result.toString(16)}, C=${carryOut}`
+      );
+    }
+  }
+
+  // ========== Rotate Instructions ==========
+
+  /**
+   * RLC - Rotate Left through Carry
+   * Format: RLC Rdst
+   * Operation: temp ← C, C ← bit 15, R ← (R << 1) | temp
+   * Flags: C (bit rotated out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeRLC(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+    const flags = this.cpu.getFlags();
+
+    // Capture current carry for insertion at bit 0
+    const oldCarry = flags.C ? 1 : 0;
+
+    // Capture bit 15 for new carry
+    const newCarry = getBit(value, 15) === 1;
+
+    // Rotate left: shift left and insert old carry at bit 0
+    const result = toUint16((value << 1) | oldCarry);
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: newCarry,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(
+        `RLC R${dst}: ${value.toString(16)} rotated left through C=${oldCarry} = ${result.toString(16)}, C=${newCarry}`
+      );
+    }
+  }
+
+  /**
+   * RRC - Rotate Right through Carry
+   * Format: RRC Rdst
+   * Operation: temp ← C, C ← bit 0, R ← (R >> 1) | (temp << 15)
+   * Flags: C (bit rotated out), Z, S; OV cleared
+   * Cycles: 6
+   */
+  private executeRRC(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+    const flags = this.cpu.getFlags();
+
+    // Capture current carry for insertion at bit 15
+    const oldCarry = flags.C ? 1 : 0;
+
+    // Capture bit 0 for new carry
+    const newCarry = getBit(value, 0) === 1;
+
+    // Rotate right: shift right and insert old carry at bit 15
+    const result = toUint16((value >>> 1) | (oldCarry << 15));
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags
+    this.cpu.setFlags({
+      C: newCarry,
+      OV: false, // Always cleared
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(
+        `RRC R${dst}: ${value.toString(16)} rotated right through C=${oldCarry} = ${result.toString(16)}, C=${newCarry}`
+      );
+    }
+  }
+
+  // ========== Bit Manipulation Instructions ==========
+
+  /**
+   * SWAP - Swap Bytes
+   * Format: SWAP Rdst
+   * Operation: R ← ((R & 0xFF) << 8) | ((R & 0xFF00) >> 8)
+   * Flags: Z, S; C cleared, OV unchanged
+   * Cycles: 6
+   */
+  private executeSWAP(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // Extract low and high bytes
+    const low = value & 0xff;
+    const high = (value & 0xff00) >> 8;
+
+    // Swap them
+    const result = (low << 8) | high;
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags (C cleared, OV unchanged)
+    this.cpu.setFlags({
+      C: false, // Always cleared (special case)
+      Z: result === 0,
+      S: getBit(result, 15) === 1,
+      // OV unchanged
+    });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`SWAP R${dst}: ${value.toString(16)} swapped = ${result.toString(16)}`);
+    }
+  }
+
+  /**
+   * NEGR - Negate (Two's Complement)
+   * Format: NEGR Rdst
+   * Operation: R ← 0 - R
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 6
+   */
+  private executeNEGR(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // Negate: 0 - value
+    const result = 0 - value;
+    this.cpu.setRegister(dst, result);
+
+    // Use existing arithmetic flags helper (subtraction)
+    this.setArithmeticFlags(result, 0, value, true);
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`NEGR R${dst}: -${value.toString(16)} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
+  // ========== Immediate/Memory Arithmetic Instructions ==========
+
+  /**
+   * ADD - Add immediate or memory to register
+   * Format: ADD #imm, Rdst  OR  ADD addr, Rdst
+   * Operation: Rdst = Rdst + value
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (immediate), 10 (SDBD), 8 (direct memory)
+   */
+  private executeAdd(inst: Instruction): void {
+    const dst = inst.operands[1].value;
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Get source value (immediate or from memory)
+    let srcValue: number;
+    if (inst.operands[0].type === 'immediate') {
+      srcValue = toUint16(inst.operands[0].value);
+    } else {
+      // Memory address
+      srcValue = this.memory.read(inst.operands[0].value);
+    }
+
+    // Perform addition
+    const result = dstValue + srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, false);
+
+    // Cycles: 8 normal immediate, 10 with SDBD, 8 for direct memory
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`ADD ${srcValue.toString(16)} + R${dst} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
+  /**
+   * SUB - Subtract immediate or memory from register
+   * Format: SUB #imm, Rdst  OR  SUB addr, Rdst
+   * Operation: Rdst = Rdst - value
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (immediate), 10 (SDBD), 8 (direct memory)
+   */
+  private executeSub(inst: Instruction): void {
+    const dst = inst.operands[1].value;
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Get source value (immediate or from memory)
+    let srcValue: number;
+    if (inst.operands[0].type === 'immediate') {
+      srcValue = toUint16(inst.operands[0].value);
+    } else {
+      // Memory address
+      srcValue = this.memory.read(inst.operands[0].value);
+    }
+
+    // Perform subtraction
+    const result = dstValue - srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Cycles: 8 normal immediate, 10 with SDBD, 8 for direct memory
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`SUB R${dst} - ${srcValue.toString(16)} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
+  /**
+   * AND - Bitwise AND immediate or memory with register
+   * Format: AND #imm, Rdst  OR  AND addr, Rdst
+   * Operation: Rdst = Rdst & value
+   * Flags: Z, S; C, OV unchanged
+   * Cycles: 8 (immediate), 10 (SDBD), 8 (direct memory)
+   */
+  private executeAnd(inst: Instruction): void {
+    const dst = inst.operands[1].value;
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Get source value (immediate or from memory)
+    let srcValue: number;
+    if (inst.operands[0].type === 'immediate') {
+      srcValue = toUint16(inst.operands[0].value);
+    } else {
+      // Memory address
+      srcValue = this.memory.read(inst.operands[0].value);
+    }
+
+    // Perform AND
+    const result = dstValue & srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Cycles: 8 normal immediate, 10 with SDBD, 8 for direct memory
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`AND ${srcValue.toString(16)} & R${dst} = ${result.toString(16)}`);
+    }
+  }
+
+  /**
+   * XOR - Bitwise XOR immediate or memory with register
+   * Format: XOR #imm, Rdst  OR  XOR addr, Rdst
+   * Operation: Rdst = Rdst ^ value
+   * Flags: Z, S; C, OV unchanged
+   * Cycles: 8 (immediate), 10 (SDBD), 8 (direct memory)
+   */
+  private executeXor(inst: Instruction): void {
+    const dst = inst.operands[1].value;
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Get source value (immediate or from memory)
+    let srcValue: number;
+    if (inst.operands[0].type === 'immediate') {
+      srcValue = toUint16(inst.operands[0].value);
+    } else {
+      // Memory address
+      srcValue = this.memory.read(inst.operands[0].value);
+    }
+
+    // Perform XOR
+    const result = dstValue ^ srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Cycles: 8 normal immediate, 10 with SDBD, 8 for direct memory
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`XOR ${srcValue.toString(16)} ^ R${dst} = ${result.toString(16)}`);
+    }
+  }
+
+  /**
+   * CMP - Compare immediate or memory with register
+   * Format: CMP #imm, Rdst  OR  CMP addr, Rdst
+   * Operation: Compare (Rdst - value), set flags but don't store result
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (immediate), 10 (SDBD), 8 (direct memory)
+   */
+  private executeCmp(inst: Instruction): void {
+    const dst = inst.operands[1].value;
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Get source value (immediate or from memory)
+    let srcValue: number;
+    if (inst.operands[0].type === 'immediate') {
+      srcValue = toUint16(inst.operands[0].value);
+    } else {
+      // Memory address
+      srcValue = this.memory.read(inst.operands[0].value);
+    }
+
+    // Perform comparison (subtraction without storing)
+    const result = dstValue - srcValue;
+
+    // Set all arithmetic flags (but don't update register)
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Cycles: 8 normal immediate, 10 with SDBD, 8 for direct memory
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `CMP R${dst} vs ${srcValue.toString(16)}: result=${toUint16(result).toString(16)} (not stored)`
+      );
     }
   }
 
