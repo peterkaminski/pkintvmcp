@@ -33,7 +33,7 @@ test-roms/          # Test ROM collection
 ### Technology Stack
 - **TypeScript** (strict mode) - chosen over Python for web UI potential and accessibility
 - **Build**: Turborepo for monorepo orchestration
-- **Testing**: Jest or Vitest (to be decided)
+- **Testing**: Vitest (selected in Sprint 1.1) - See [docs/testing-guide.md](docs/testing-guide.md)
 - **MCP SDK**: @modelcontextprotocol/sdk
 
 ## Development Phases
@@ -97,6 +97,8 @@ npm package publication, community launch, optional web UI.
 - **Success criteria**: >99% instruction compatibility, zero known bugs on test suite
 
 ### Test Structure
+**IMPORTANT:** See [docs/testing-guide.md](docs/testing-guide.md) for complete testing patterns and best practices.
+
 - **Unit tests**: Per-instruction validation
 - **Integration tests**: Multi-instruction sequences, control flow
 - **Edge cases**: SDBD with various addressing modes, stack operations, register aliasing (R7=PC)
