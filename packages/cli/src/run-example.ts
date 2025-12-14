@@ -128,16 +128,8 @@ function executeROM(options: RunOptions): ExecutionResult {
         console.log(`[$${pc.toString(16).toUpperCase().padStart(4, '0')}] ${instruction.opcode}`);
       }
 
-      // Execute instruction
+      // Execute instruction (Executor handles PC advancement automatically)
       executor.execute(instruction);
-
-      // Advance PC by instruction length (unless it's a control flow instruction that modified PC)
-      // Control flow instructions (jumps, branches) set PC directly in executor
-      const newPC = cpu.getPC();
-      if (newPC === pc) {
-        // PC wasn't modified by instruction, advance it
-        cpu.setPC(pc + instruction.length);
-      }
 
       instructionsExecuted++;
 

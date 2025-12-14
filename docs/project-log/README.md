@@ -16,6 +16,7 @@ Where:
 
 ## Current Entries
 
+- [2025-12-14](project-log-entry-2025-12-14-002.md) - Manus Repository Analysis, Critical Bug Fix: PC Advancement
 - [2025-12-13](project-log-entry-2025-12-13-001.md) - Sprint 1.7: Basic MCP Server Implementation (Phases 1-6 Complete)
 - [2025-12-12](project-log-entry-2025-12-12-000.md) - Sprint 1.6.1: Auto-Increment Instructions, Sprint 1.6: Shifts/Rotates/Immediate Forms
 - [2025-12-11](project-log-entry-2025-12-11-003.md) - Sprint 1.5: Control Flow and Stack Instructions, Sprint 1.5.1: CP-1600 Assembly Examples

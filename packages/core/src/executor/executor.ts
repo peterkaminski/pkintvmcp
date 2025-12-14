@@ -22,11 +22,15 @@ export class Executor {
 
   /**
    * Execute a single instruction
+   * Automatically advances PC unless the instruction modifies it (control flow)
    */
   public execute(instruction: Instruction): void {
     if (this.options.trace) {
       console.log(`Executing: ${instruction.opcode}`, instruction.operands);
     }
+
+    // Save PC before execution to detect if instruction modifies it
+    const pcBefore = this.cpu.getPC();
 
     switch (instruction.opcode) {
       // Data movement
@@ -209,7 +213,15 @@ export class Executor {
         break;
 
       default:
-        throw new Error(`Unknown opcode: ${instruction.opcode}`);
+        throw new Error(`Unimplemented opcode: ${instruction.opcode}`);
+    }
+
+    // Advance PC by instruction length if it wasn't modified by the instruction
+    // Control flow instructions (jumps, branches, calls) set PC directly
+    const pcAfter = this.cpu.getPC();
+    if (pcAfter === pcBefore) {
+      // PC wasn't modified, advance it by instruction length
+      this.cpu.setPC(pcBefore + instruction.length);
     }
   }
 

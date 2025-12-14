@@ -101,7 +101,7 @@ export function step(
     // Decode instruction
     const instruction = session.decoder.decode(pc, sdbd);
 
-    // Execute instruction
+    // Execute instruction (Executor handles PC advancement automatically)
     session.executor.execute(instruction);
 
     instructionsExecuted++;
@@ -144,7 +144,7 @@ export function run(
     // Decode instruction
     const instruction = session.decoder.decode(pc, sdbd);
 
-    // Execute instruction
+    // Execute instruction (Executor handles PC advancement automatically)
     session.executor.execute(instruction);
 
     instructionsExecuted++;
