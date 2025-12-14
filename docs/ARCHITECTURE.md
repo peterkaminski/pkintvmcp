@@ -384,6 +384,108 @@ class Memory {
 - MMIO regions trigger peripheral reads/writes
 - Extension point for peripheral integration
 
+### Decoder and Executor: Design and Separation
+
+**Overview:**
+The decoder and executor form the heart of the instruction processing pipeline. They are intentionally designed as separate, independent components following a classic two-stage architecture common in CPU emulation and compiler design.
+
+**What the Decoder Does:**
+- **Input:** Memory address + SDBD state (boolean)
+- **Process:** Reads instruction word(s) from memory at the given address and parses the binary encoding
+- **Output:** Structured `Instruction` object with opcode, addressing mode, operands, and metadata
+- **Key responsibility:** Understanding the CP-1600 instruction encoding format (10-bit words, bit fields, multi-word instructions)
+
+The decoder is purely a **parser** - it translates from binary machine code to a structured intermediate representation. It knows nothing about what instructions do, only how they're encoded.
+
+**What the Executor Does:**
+- **Input:** `Instruction` object from decoder
+- **Process:** Dispatches to instruction-specific handler based on opcode
+- **Output:** Updated CPU state (registers, flags, program counter, cycle count)
+- **Key responsibility:** Implementing the semantics and behavior of each CP-1600 instruction
+
+The executor is purely an **interpreter** - it takes structured instructions and applies their effects to the CPU state. It knows nothing about instruction encoding, only what each instruction does.
+
+**Why They Are Separate:**
+
+1. **Separation of Concerns:**
+   - Decoder: "How is this instruction encoded?" (parsing problem)
+   - Executor: "What does this instruction do?" (semantic problem)
+   - Each component can be understood, tested, and debugged independently
+
+2. **Testability:**
+   - Decoder tests: "Does it correctly parse instruction bits into operands?"
+   - Executor tests: "Does it correctly update CPU state for this operation?"
+   - Clean interfaces make unit testing straightforward
+
+3. **Maintainability:**
+   - Changes to instruction encoding (e.g., fixing operand order) only affect decoder
+   - Changes to instruction behavior (e.g., flag calculation) only affect executor
+   - Decoder can be verified against CP-1600 reference manual independently
+   - Executor can be verified against jzIntv behavior independently
+
+4. **Flexibility:**
+   - Same executor could work with different frontends (assembler, disassembler, JIT)
+   - Same decoder output could feed multiple backends (interpreter, tracer, analyzer)
+   - Clean architecture supports future extensions (e.g., web UI debugger)
+
+**How They Work Together:**
+
+```
+┌─────────────┐
+│   Memory    │
+│ (ROM/RAM)   │
+└──────┬──────┘
+       │
+       │ instruction word(s)
+       ▼
+┌─────────────┐
+│   Decoder   │──────┐
+│             │      │ reads multiple words if needed
+└──────┬──────┘      │ (immediate values, branch targets)
+       │             │
+       │ Instruction │
+       │  (struct)   │
+       ▼             ▼
+┌─────────────┐   ┌────────┐
+│  Executor   │◄──┤ Memory │
+│             │   └────────┘
+└──────┬──────┘
+       │
+       │ state updates
+       ▼
+┌─────────────┐
+│     CPU     │
+│   (State)   │
+└─────────────┘
+```
+
+**Data Flow Example (ADDI instruction):**
+
+1. **Decoder phase:**
+   - Reads word at PC: `0x0287` (ADDI R0, #42 encoding)
+   - Extracts opcode bits → `Opcode.ADD`
+   - Extracts mode bits → `AddressingMode.IMMEDIATE`
+   - Reads next word for immediate value: `0x002A` (42)
+   - Extracts destination register bits → R0
+   - Returns: `{ opcode: ADD, mode: IMMEDIATE, operands: [{ type: 'immediate', value: 42 }, { type: 'register', value: 0 }], length: 2 }`
+
+2. **Executor phase:**
+   - Receives Instruction object
+   - Dispatches to `executeADD()` handler
+   - Reads operands: immediate=42, dst=R0
+   - Reads R0 current value
+   - Computes: R0_new = R0_old + 42
+   - Updates flags (S, Z, C, OV)
+   - Writes R0_new back to CPU
+   - Updates cycle count
+   - Returns (caller advances PC by instruction.length)
+
+**Current Implementation Status:**
+- ✅ Decoder: Immediate, register, direct, indirect, branch addressing modes complete
+- ✅ Executor: ~30 instructions implemented (MOVR, ADD, SUB, branches, etc.)
+- 🟢 In progress: Multi-word jump instruction decoding
+- ⏳ Todo: Remaining shifts, rotates, special instructions
+
 ### Decoder Class
 
 **Responsibilities:**

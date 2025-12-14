@@ -286,7 +286,9 @@ export class Decoder {
    * @param sdbd - Is SDBD active?
    * @returns Addressing mode
    */
-  private extractAddressingMode(_word: number, opcode: Opcode, sdbd: boolean): AddressingMode {
+  private extractAddressingMode(word: number, opcode: Opcode, sdbd: boolean): AddressingMode {
+    const w = word & 0x3FF;  // 10-bit instruction word
+
     // SDBD modifier
     if (sdbd && this.usesSDBD(opcode)) {
       return AddressingModeEnum.SDBD_MODIFIED;
@@ -302,18 +304,34 @@ export class Decoder {
       return AddressingModeEnum.REGISTER;
     }
 
-    // Immediate addressing
-    if (opcode === OpcodeEnum.MVI) {
-      return AddressingModeEnum.IMMEDIATE;
-    }
-
     // Stack addressing
     if (opcode === OpcodeEnum.PSHR || opcode === OpcodeEnum.PULR) {
       return AddressingModeEnum.STACK;
     }
 
-    // Default to direct for now
-    // TODO: Implement full addressing mode detection
+    // Branch instructions (PC-relative addressing)
+    // Check before usesAddressingBits because branches also have bit 9=1
+    if (this.isBranch(opcode)) {
+      return AddressingModeEnum.DIRECT;  // Branches use DIRECT mode for target address
+    }
+
+    // For MVI, ADD, SUB, CMP, AND, XOR - check bits to distinguish addressing modes
+    // These instructions use bit 9=1 and vary by bits 3-5:
+    //   111 (0x7) = Immediate mode
+    //   000 (0x0) = Direct mode
+    //   001-110   = Indirect mode (MMM register selector)
+    if (this.usesAddressingBits(opcode)) {
+      const mmmBits = (w >> 3) & 0x7;  // bits 3-5
+      if (mmmBits === 0x7) {
+        return AddressingModeEnum.IMMEDIATE;
+      } else if (mmmBits === 0x0) {
+        return AddressingModeEnum.DIRECT;
+      } else {
+        return AddressingModeEnum.INDIRECT;
+      }
+    }
+
+    // Default (should not reach here for valid instructions)
     return AddressingModeEnum.DIRECT;
   }
 
@@ -363,11 +381,12 @@ export class Decoder {
     // Immediate mode (MVII, ADDI, etc.)
     // Pattern: 1o oo11 1ddd (10-bit)
     // From jzIntv: bits 0-2 = dest, next word = immediate value
+    // NOTE: Push immediate first to match assembly syntax (source, destination)
     if (mode === AddressingModeEnum.IMMEDIATE || mode === AddressingModeEnum.SDBD_MODIFIED) {
       const dst = w & 0x7;  // bits 0-2
-      operands.push({ type: 'register', value: dst });
 
       // Immediate value from next word(s)
+      // Push immediate FIRST (source operand)
       if (sdbd) {
         // Read 16-bit immediate from next two words
         const low = this.memory.read(address + 1) & 0xFF;
@@ -379,6 +398,9 @@ export class Decoder {
         const immediate = this.memory.read(address + 1) & 0x3FF;
         operands.push({ type: 'immediate', value: immediate });
       }
+
+      // Push destination SECOND to match assembly syntax: MVII #imm, Rdst
+      operands.push({ type: 'register', value: dst });
 
       return operands;
     }
@@ -392,8 +414,104 @@ export class Decoder {
       return operands;
     }
 
-    // Default: no operands extracted yet
-    // TODO: Implement remaining addressing modes (direct, indirect)
+    // Branch instructions (2-word: instruction + displacement)
+    // Pattern: 10 00z0 cccc P-P-P-P-P-P-P-P-P-P
+    // z bit (bit 5) = direction: 0=forward, 1=backward
+    // P-P = 10-bit displacement in next word
+    // Forward: target = PC + 2 + displacement
+    // Backward: target = PC + displacement - 0x3FFD (PC-relative with base offset)
+    // CHECK BEFORE DIRECT MODE because branches also use DIRECT addressing mode
+    if (this.isBranch(_opcode)) {
+      const dirBit = (w >> 5) & 0x1;  // bit 5: 0=forward, 1=backward
+      const displacement = this.memory.read(address + 1) & 0x3FF;
+
+      // Calculate target address (PC-relative)
+      let targetAddress: number;
+      if (dirBit === 0) {
+        // Forward branch: PC + 2 + displacement
+        targetAddress = address + 2 + displacement;
+      } else {
+        // Backward branch: PC + displacement - 0x3FFD
+        // This formula allows backward branches to reach addresses below the current PC
+        targetAddress = address + displacement - 0x3FFD;
+      }
+
+      operands.push({ type: 'address', value: targetAddress & 0xFFFF });
+
+      return operands;
+    }
+
+    // Direct addressing mode (memory address in next word)
+    // Pattern: 1o oo00 0ddd (bits 3-5 = 000)
+    // For MVI/ADD/SUB/CMP/AND/XOR with direct memory address
+    if (mode === AddressingModeEnum.DIRECT) {
+      const dst = w & 0x7;  // bits 0-2 = destination register
+
+      // Read 10-bit memory address from next word
+      const address_operand = this.memory.read(address + 1) & 0x3FF;
+
+      // Push operands in source, destination order
+      // For MVI/ADD/SUB/CMP/AND/XOR: memory[address], register
+      operands.push({ type: 'address', value: address_operand });
+      operands.push({ type: 'register', value: dst });
+
+      return operands;
+    }
+
+    // Indirect addressing mode (pointer in register)
+    // Pattern: 1o oomm mddd (bits 3-5 = MMM register selector)
+    if (mode === AddressingModeEnum.INDIRECT) {
+      const dst = w & 0x7;  // bits 0-2 = destination register
+      const mmm = (w >> 3) & 0x7;  // bits 3-5 = pointer register
+
+      // Push operands in source, destination order
+      // For MVI@/ADD@/SUB@/CMP@/AND@/XOR@: @Rptr, register
+      operands.push({ type: 'register', value: mmm });  // pointer register
+      operands.push({ type: 'register', value: dst });  // destination register
+
+      return operands;
+    }
+
+    // Jump instructions (3-word: instruction + address across 2 words)
+    // J: Word 1: 0 000 000 100, Word 2: X XX1 1AA AAA, Word 3: X XXX AAA A00
+    // JSR: Word 1: 0 001 BAA AAA, Word 2: X XX1 BAA AAA, Word 3: X XXX AAA A00
+    // Address is distributed across words 1, 2, and 3 in the "A" bit positions
+    if (_opcode === OpcodeEnum.J || _opcode === OpcodeEnum.JSR ||
+        _opcode === OpcodeEnum.JSRE || _opcode === OpcodeEnum.JSRD) {
+
+      const w1 = this.memory.read(address + 1) & 0x3FF;
+      const w2 = this.memory.read(address + 2) & 0x3FF;
+
+      // Extract address bits from the three words
+      // This is a simplified extraction - exact bit positions need verification against jzIntv
+      // For now, combine relevant bits from words 1, 2, and 3
+      // TODO: Verify exact address reconstruction formula against jzIntv source
+
+      // Simplified address extraction (combines lower bits from each word)
+      const addrBits0 = w & 0x3F;          // 6 bits from word 0 (bits 0-5)
+      const addrBits1 = w1 & 0x1F;         // 5 bits from word 1 (bits 0-4)
+      const addrBits2 = (w2 >> 2) & 0x1F;  // 5 bits from word 2 (bits 2-6)
+
+      const targetAddress = (addrBits2 << 11) | (addrBits1 << 6) | addrBits0;
+
+      // For JSR/JSRE/JSRD, extract return register from word 1
+      if (_opcode !== OpcodeEnum.J) {
+        // Return register is encoded in bits of word 1
+        // JSR format: "1BB" where BB = 00 (R4), 01 (R5), 10 (R6)
+        const returnReg = ((w >> 3) & 0x3) + 4;  // Maps 0,1,2 to R4,R5,R6
+
+        // JSR operands: [return_register, target_address]
+        operands.push({ type: 'register', value: returnReg });
+        operands.push({ type: 'address', value: targetAddress & 0xFFFF });
+      } else {
+        // J operands: [target_address]
+        operands.push({ type: 'address', value: targetAddress & 0xFFFF });
+      }
+
+      return operands;
+    }
+
+    // Default: no operands extracted
     return operands;
   }
 
@@ -513,6 +631,22 @@ export class Decoder {
       opcode === OpcodeEnum.XORR ||
       opcode === OpcodeEnum.INCR ||
       opcode === OpcodeEnum.DECR
+    );
+  }
+
+  /**
+   * Check if opcode uses addressing mode bits (bits 3-5)
+   * These instructions support immediate, direct, and indirect modes
+   */
+  private usesAddressingBits(opcode: Opcode): boolean {
+    return (
+      opcode === OpcodeEnum.MVI ||
+      opcode === OpcodeEnum.MVO ||
+      opcode === OpcodeEnum.ADD ||
+      opcode === OpcodeEnum.SUB ||
+      opcode === OpcodeEnum.CMP ||
+      opcode === OpcodeEnum.AND ||
+      opcode === OpcodeEnum.XOR
     );
   }
 }

@@ -173,10 +173,11 @@ describe('Decoder', () => {
       expect(inst.opcode).toBe(OpcodeEnum.MVI);
       expect(inst.addressingMode).toBe(AddressingModeEnum.IMMEDIATE);
       expect(inst.operands).toHaveLength(2);
-      expect(inst.operands[0].type).toBe('register');
-      expect(inst.operands[0].value).toBe(1); // R1
-      expect(inst.operands[1].type).toBe('immediate');
-      expect(inst.operands[1].value).toBe(42);
+      // Operands now match assembly syntax: MVI #42, R1 → [immediate, register]
+      expect(inst.operands[0].type).toBe('immediate');
+      expect(inst.operands[0].value).toBe(42); // #42 (source)
+      expect(inst.operands[1].type).toBe('register');
+      expect(inst.operands[1].value).toBe(1); // R1 (destination)
       expect(inst.sdbd).toBe(false);
       expect(inst.length).toBe(2); // Instruction + immediate word
     });
@@ -194,12 +195,121 @@ describe('Decoder', () => {
       expect(inst.opcode).toBe(OpcodeEnum.MVI);
       expect(inst.addressingMode).toBe(AddressingModeEnum.SDBD_MODIFIED);
       expect(inst.operands).toHaveLength(2);
-      expect(inst.operands[0].type).toBe('register');
-      expect(inst.operands[0].value).toBe(2); // R2
-      expect(inst.operands[1].type).toBe('immediate');
-      expect(inst.operands[1].value).toBe(0x1234);
+      // Operands now match assembly syntax: MVI #0x1234, R2 → [immediate, register]
+      expect(inst.operands[0].type).toBe('immediate');
+      expect(inst.operands[0].value).toBe(0x1234); // #0x1234 (source)
+      expect(inst.operands[1].type).toBe('register');
+      expect(inst.operands[1].value).toBe(2); // R2 (destination)
       expect(inst.sdbd).toBe(true);
       expect(inst.length).toBe(3); // MVI + 2 immediate words
+    });
+  });
+
+  describe('decode - Direct addressing', () => {
+    // CP-1600 Direct mode: 1o oo00 0ddd (bit 9=1, bits 3-5=000)
+    // Address is in the NEXT word (10-bit)
+    // Used for MVI, ADD, SUB, CMP, AND, XOR with memory addresses
+
+    test('decodes MVI $200, R3 (direct mode)', () => {
+      // MVI: opcode=010, mode=000 (direct), dest=011
+      // Pattern: 1 010 000 011 = 0x283
+      // Memory address $200 in next word
+      memory.write(0x5000, 0x283);
+      memory.write(0x5001, 0x200);  // Address
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.MVI);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.DIRECT);
+      expect(inst.operands).toHaveLength(2);
+      // Operands match assembly syntax: MVI $200, R3 → [address, register]
+      expect(inst.operands[0].type).toBe('address');
+      expect(inst.operands[0].value).toBe(0x200); // Memory address (source)
+      expect(inst.operands[1].type).toBe('register');
+      expect(inst.operands[1].value).toBe(3); // R3 (destination)
+      expect(inst.sdbd).toBe(false);
+      expect(inst.length).toBe(2); // Instruction + address word
+    });
+
+    test('decodes ADD $100, R0 (direct mode)', () => {
+      // ADD: opcode=011, mode=000 (direct), dest=000
+      // Pattern: 1 011 000 000 = 0x2C0
+      memory.write(0x5000, 0x2C0);
+      memory.write(0x5001, 0x100);  // Address
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.ADD);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.DIRECT);
+      expect(inst.operands).toHaveLength(2);
+      expect(inst.operands[0].type).toBe('address');
+      expect(inst.operands[0].value).toBe(0x100);
+      expect(inst.operands[1].type).toBe('register');
+      expect(inst.operands[1].value).toBe(0); // R0
+    });
+
+    test('decodes SUB $2F0, R6 (direct mode - stack area)', () => {
+      // SUB: opcode=100, mode=000 (direct), dest=110
+      // Pattern: 1 100 000 110 = 0x306
+      memory.write(0x5000, 0x306);
+      memory.write(0x5001, 0x2F0);  // Stack area address
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.SUB);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.DIRECT);
+      expect(inst.operands[0].value).toBe(0x2F0);
+      expect(inst.operands[1].value).toBe(6); // R6
+    });
+  });
+
+  describe('decode - Indirect addressing', () => {
+    // CP-1600 Indirect mode: 1o oomm mddd (bit 9=1, bits 3-5=MMM pointer register)
+    // MMM=001-110 indicates R1-R6 as pointer register
+    // Used for MVI@, ADD@, SUB@, CMP@, AND@, XOR@ with register pointers
+
+    test('decodes MVI@ R4, R2 (indirect with auto-increment)', () => {
+      // MVI@: opcode=010, mode=100 (R4 indirect), dest=010
+      // Pattern: 1 010 100 010 = 0x2A2
+      memory.write(0x5000, 0x2A2);
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.MVI);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
+      expect(inst.operands).toHaveLength(2);
+      // Operands match assembly syntax: MVI@ R4, R2 → [pointer, destination]
+      expect(inst.operands[0].type).toBe('register');
+      expect(inst.operands[0].value).toBe(4); // R4 (pointer/source)
+      expect(inst.operands[1].type).toBe('register');
+      expect(inst.operands[1].value).toBe(2); // R2 (destination)
+      expect(inst.length).toBe(1); // Single word
+    });
+
+    test('decodes ADD@ R1, R5 (indirect mode)', () => {
+      // ADD@: opcode=011, mode=001 (R1 indirect), dest=101
+      // Pattern: 1 011 001 101 = 0x2CD
+      memory.write(0x5000, 0x2CD);
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.ADD);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
+      expect(inst.operands[0].value).toBe(1); // R1 (pointer)
+      expect(inst.operands[1].value).toBe(5); // R5 (destination)
+    });
+
+    test('decodes CMP@ R6, R0 (stack pointer indirect)', () => {
+      // CMP@: opcode=101, mode=110 (R6 indirect), dest=000
+      // Pattern: 1 101 110 000 = 0x370
+      memory.write(0x5000, 0x370);
+
+      const inst = decoder.decode(0x5000, false);
+
+      expect(inst.opcode).toBe(OpcodeEnum.CMP);
+      expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
+      expect(inst.operands[0].value).toBe(6); // R6 (stack pointer)
+      expect(inst.operands[1].value).toBe(0); // R0
     });
   });
 
@@ -213,14 +323,19 @@ describe('Decoder', () => {
     // Displacement is in the NEXT word
 
     test('decodes B (unconditional branch)', () => {
-      // B: condition=0, z=0 (forward)
+      // B: condition=0, z=0 (forward), displacement=10
       // Pattern: 10 00 0 0 0000 = 0x200
+      // Target = PC + 2 + displacement = 0x5000 + 2 + 10 = 0x500C
       memory.write(0x5000, 0x200);
       memory.write(0x5001, 0x00A); // Displacement +10
 
       const inst = decoder.decode(0x5000, false);
 
       expect(inst.opcode).toBe(OpcodeEnum.B);
+      expect(inst.operands).toHaveLength(1);
+      expect(inst.operands[0].type).toBe('address');
+      expect(inst.operands[0].value).toBe(0x500C); // 0x5000 + 2 + 10
+      expect(inst.length).toBe(2);
     });
 
     test('decodes BEQ (branch if equal)', () => {
@@ -234,15 +349,21 @@ describe('Decoder', () => {
       expect(inst.opcode).toBe(OpcodeEnum.BEQ);
     });
 
-    test('decodes BNEQ (branch if not equal)', () => {
-      // BNEQ: condition=12 (0b1100), z=1 (backward, bit 6)
+    test('decodes BNEQ (branch if not equal) - backward branch', () => {
+      // BNEQ: condition=12 (0b1100), z=1 (backward, bit 6), displacement=4
       // Pattern: 1 0 0 0 z 0 cccc = 1 0 0 0 1 0 1100 = 0x22C
+      // Backward branch: PC + 2 - ~displacement
+      // ~4 (10-bit) = 0x3FB, so target = 0x5000 + 2 - 0x3FB = 0x1007
       memory.write(0x5000, 0x22C);
       memory.write(0x5001, 0x004); // Displacement (backward)
 
       const inst = decoder.decode(0x5000, false);
 
       expect(inst.opcode).toBe(OpcodeEnum.BNEQ);
+      expect(inst.operands).toHaveLength(1);
+      expect(inst.operands[0].type).toBe('address');
+      // Backward: PC + 2 - ~disp = 0x5002 - 0x3FB = 0x1007
+      expect(inst.operands[0].value).toBe(0x1007);
     });
 
     test('decodes BC (branch if carry)', () => {

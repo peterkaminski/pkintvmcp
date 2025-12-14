@@ -39,6 +39,9 @@ pkIntvMCP/
 │   ├── MCP_API.md             # MCP interface reference
 │   ├── PROJECT_SETUP.md       # This document
 │   ├── USER_GUIDE.md          # User documentation
+│   ├── cp1600-ref/            # CP-1600 Instruction Set Reference (CRITICAL)
+│   │   ├── cp1600_ref.json    # Machine-readable instruction specifications
+│   │   └── README.md          # JSON structure and usage guide
 │   └── adr/                   # Architecture Decision Records
 ├── test-roms/                 # Test ROM collection
 │   ├── basic-ops.rom          # Basic operations test
@@ -147,6 +150,53 @@ Total estimated files: ~150-200 files (Phase 1)
 3. Move to ROADMAP.md if approved for future sprint
 
 ---
+
+## Key Reference Documents
+
+### docs/cp1600-ref/cp1600_ref.json
+
+**Purpose:** Machine-readable CP-1600 instruction set reference
+
+**CRITICAL IMPORTANCE:** This is the authoritative source for all instruction encoding questions during decoder/executor implementation. Always consult this file when working with instruction opcodes, operand formats, addressing modes, cycle counts, or status flag updates.
+
+**Contents:**
+- Complete instruction set derived from official CP-1600 manual
+- Instruction mnemonics, operands, opcode formats, cycle counts
+- Status flag changes for each instruction
+- Symbolic notation legend for operand types and addressing modes
+- Organized by functional categories (register ops, branches, jumps, etc.)
+
+**Structure:**
+```json
+{
+  "document_info": {...},
+  "sections": [
+    {
+      "section_id": "3.6.1",
+      "title": "REGISTER TO REGISTER",
+      "instructions": [
+        {
+          "mnemonic": "MOVR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 010 SSS DDD",
+          "description": "...",
+          "status_change": "S, Z"
+        }
+      ]
+    }
+  ],
+  "symbolic_notation": {...}
+}
+```
+
+**Usage:**
+- Decoder implementation: Extract opcode patterns and operand field positions
+- Executor implementation: Verify instruction semantics and flag updates
+- Test writing: Generate test cases for all instructions
+- Documentation: Reference for instruction behavior
+
+See **docs/cp1600-ref/README.md** for detailed JSON structure and query examples.
 
 ---
 

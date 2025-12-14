@@ -62,6 +62,8 @@ npm package publication, community launch, optional web UI.
 
 ## CP-1600 Architecture Reference
 
+**IMPORTANT**: For all questions about instruction encoding, operand formats, cycle counts, and opcode patterns, consult **docs/cp1600-ref/cp1600_ref.json** first. This is a machine-readable JSON reference derived from the official CP-1600 manual with complete instruction specifications. See docs/cp1600-ref/README.md for structure and usage.
+
 ### Key CPU Characteristics
 - **10-bit instruction words** stored in ROM (called "decles")
 - **16-bit data operations** - all registers and memory are 16-bit
@@ -136,6 +138,7 @@ Sessions: Multiple simultaneous debugging sessions with isolation
 - **docs/USER_GUIDE.md**: Provisional user documentation (workflows, examples)
 - **docs/resources-guide.md**: Guide to resources/ folder reference materials
 - **docs/project-log/**: Chronological project log (one entry per file)
+- **docs/cp1600-ref/cp1600_ref.json**: Machine-readable CP-1600 instruction set reference (CRITICAL - use this for all instruction encoding questions)
 
 ### Project Tracking Documents (in docs/)
 

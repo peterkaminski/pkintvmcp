@@ -6,6 +6,50 @@
 
 ---
 
+## CRITICAL: Primary Instruction Set Reference
+
+### docs/cp1600-ref/cp1600_ref.json
+
+**⚠️ ALWAYS CONSULT THIS FIRST** for instruction encoding questions.
+
+**Location:** `docs/cp1600-ref/` (in the main docs/ tree, NOT in resources/)
+
+**Purpose:** Machine-readable, authoritative CP-1600 instruction set reference
+
+**Why it exists:**
+- Derived from official CP-1600 manual (cp1600_ref.pdf in resources/)
+- Structured as JSON for easy parsing and querying
+- No licensing restrictions (our own work)
+- Single source of truth for instruction specifications
+
+**What it contains:**
+- All ~50 CP-1600 instructions organized by category
+- Instruction mnemonics, operands, opcode bit patterns
+- Cycle counts with footnote explanations
+- Status flag changes (S, Z, C, OV)
+- Addressing mode information
+- Symbolic notation legend
+
+**When to use:**
+- **Decoder implementation:** Extract opcode patterns, operand field positions
+- **Executor implementation:** Verify instruction semantics, flag updates
+- **Test writing:** Generate comprehensive test cases
+- **Debugging:** Resolve questions about instruction behavior
+- **Documentation:** Reference for writing our own docs
+
+**How to use:**
+```bash
+# Find instruction by mnemonic
+jq '.sections[] | .instructions[] | select(.mnemonic == "MOVR")' docs/cp1600-ref/cp1600_ref.json
+
+# List all instructions in a category
+jq '.sections[] | select(.title == "REGISTER TO REGISTER")' docs/cp1600-ref/cp1600_ref.json
+```
+
+**See also:** `docs/cp1600-ref/README.md` for JSON structure details and usage examples
+
+---
+
 ## Quick Reference by Development Phase
 
 ### Sprint 1.2-1.4 (Instruction Decoder & Executor)
@@ -274,13 +318,15 @@ When in doubt: test against actual jzIntv behavior.
 ## Quick Reference Index
 
 ### I need to understand instruction X
-1. Start: `jzintv-20200712-src/doc/programming/cp1600_summary.txt`
-2. Details: `CP-1600_Microprocessor_Instruction_Set_Simplified_Presentation.md.txt`
-3. Official spec: `CP-1600_Microprocessor_Users_Manual_May75.pdf`
+1. **START HERE:** `docs/cp1600-ref/cp1600_ref.json` (machine-readable, authoritative)
+2. Quick reference: `jzintv-20200712-src/doc/programming/cp1600_summary.txt`
+3. Details: `CP-1600_Microprocessor_Instruction_Set_Simplified_Presentation.md.txt`
+4. Official spec: `CP-1600_Microprocessor_Users_Manual_May75.pdf`
 
 ### I need cycle timing for instruction X
-1. Quick: `jzintv-20200712-src/doc/programming/cp1600_summary.txt`
-2. Official: `CP-1600_Microprocessor_Users_Manual_May75.pdf` (page 53+)
+1. **START HERE:** `docs/cp1600-ref/cp1600_ref.json` (includes cycle counts with footnotes)
+2. Quick: `jzintv-20200712-src/doc/programming/cp1600_summary.txt`
+3. Official: `CP-1600_Microprocessor_Users_Manual_May75.pdf` (page 53+)
 
 ### I need to understand the memory map
 - `jzintv-20200712-src/doc/programming/memory_map.txt`

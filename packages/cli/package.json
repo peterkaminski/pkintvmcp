@@ -1,27 +1,26 @@
 {
-  "name": "@pkintvmcp/mcp-cpu",
+  "name": "@pkintvmcp/cli",
   "version": "0.1.0",
-  "description": "MCP server for CP-1600 debugging",
+  "description": "CLI test runner for CP-1600 ROMs",
   "type": "module",
-  "bin": {
-    "pkintvmcp-cpu": "./dist/index.js"
-  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "cp1600-run": "./dist/run-example.js"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest run",
+    "test": "echo 'No tests yet for CLI package'",
     "test:watch": "vitest",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.3",
     "@pkintvmcp/core": "*"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^1.6.1",
     "eslint": "^8.55.0",
     "typescript": "^5.3.0",
     "vitest": "^1.0.0"

@@ -1,0 +1,883 @@
+{
+  "document_info": {
+    "title": "CP1600 CPU Reference - Instruction Set",
+    "source_file": "cp1600_ref.pdf"
+  },
+  "sections": [
+    {
+      "section_id": "3.6.1",
+      "title": "REGISTER TO REGISTER",
+      "instructions": [
+        {
+          "mnemonic": "MOVR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 010 SSS DDD",
+          "description": "MOVe contents of Register SSS to Register DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "TSTR",
+          "operands": "SSS",
+          "cycles": "6/7**",
+          "opcode_format": "0 010 SSS SSS",
+          "description": "TEST contents of Register SSS.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "JR",
+          "operands": "SSS",
+          "cycles": "7",
+          "opcode_format": "0 010 SSS 111",
+          "description": "Jump to address in Register SSS (move address to Register 7).",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "ADDR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 011 SSS DDD",
+          "description": "ADD contents of Register SSS to contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SUBR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 100 SSS DDD",
+          "description": "SUBtract contents of Register SSS from contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "CMPR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 101 SSS DDD",
+          "description": "CoMPare Register SSS with register DDD by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "ANDR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 110 SSS DDD",
+          "description": "logical AND contents of Register SSS with contents of register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "XORR",
+          "operands": "SSS, DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 111 SSS DDD",
+          "description": "eXclusive OR contents of Register SSS with contents of register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "CLRR",
+          "operands": "DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 111 DDD DDD",
+          "description": "CLeaR Register to zero.",
+          "status_change": "S, Z"
+        }
+      ],
+      "footnotes": [
+        "*7 Cycles if DDD=6 or 7.",
+        "**7 Cycles if SSS=6 or 7."
+      ]
+    },
+    {
+      "section_id": "3.6.2",
+      "title": "SINGLE REGISTER",
+      "instructions": [
+        {
+          "mnemonic": "INCR",
+          "operands": "DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 000 001 DDD",
+          "description": "INCrement contents of Register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "DECR",
+          "operands": "DDD",
+          "cycles": "6/7**",
+          "opcode_format": "0 000 010 DDD",
+          "description": "DECrement contents of Register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "COMR",
+          "operands": "DDD",
+          "cycles": "7",
+          "opcode_format": "0 000 011 DDD",
+          "description": "one's COMplement contents of Register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "NEGR",
+          "operands": "DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 000 100 DDD",
+          "description": "two's complement contents of Register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "ADCR",
+          "operands": "DDD",
+          "cycles": "6/7*",
+          "opcode_format": "0 000 101 DDD",
+          "description": "ADd Carry bit to contents of Register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "GSWD",
+          "operands": "DDD",
+          "cycles": "6",
+          "opcode_format": "0 000 110 ODD",
+          "description": "Get Status WorD in register DD. Bits 0-3, 8-11 set to 0. Bits 4, 12=C; 5, 13=OV; 6, 14=Z; 7, 15=S.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "NOP",
+          "operands": "",
+          "cycles": "6",
+          "opcode_format": "0 000 110 10X",
+          "description": "No Operation.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "SIN",
+          "operands": "",
+          "cycles": "6",
+          "opcode_format": "0 000 110 11X",
+          "description": "Software Interrupt; pulse to PCIT pin.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "RSWD",
+          "operands": "SSS",
+          "cycles": "6",
+          "opcode_format": "0 000 111 SSS",
+          "description": "Restore Status WorD from register SSS; Bit 4 to C, Bit 5 to OV, Bit 6 to Z, Bit 7 to S.",
+          "status_change": "S, Z, C, OV"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.3",
+      "title": "REGISTER SHIFT",
+      "notes": [
+        "Executable only with Registers 0, 1, 2, 3.",
+        "Shifts are not interruptible.",
+        "n=1 or 2 places"
+      ],
+      "instructions": [
+        {
+          "mnemonic": "SWAP",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 001 NRR",
+          "description": "N=0, SWAP bytes of register RR. S equals Bit 7 of results of SWAP. N=1, not supported.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "SLL",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 001 NRR",
+          "description": "N=0 Shift Logical Left one bit. Zero to low bit. N=1 Shift Logical Left two bits. Zero to low 2 bits.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "RLC",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1)",
+          "opcode_format": "0 001 010 NRR",
+          "description": "N=0, Rotate Left one bit using C as bit 16.",
+          "status_change": "S, Z, C"
+        },
+        {
+          "mnemonic": "SLLC",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 011 NRR",
+          "description": "N=0 Shift Logical Left one bit using C as bit 16. Zero to low bit. N=1, Shift Logical Left two bits using C as bit 17 and OV as bit 16. Zero to low 2 bits.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SLR",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 100 NRR",
+          "description": "N=0, Shift Logical Right one bit. Zero to high bit. N=1, Shift Logical Right two bits. Zero to high two bits.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "SAR",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 101 NRR",
+          "description": "N=0, Shift Arithmetic Right one bit. Sign bit copied to high bit. N=1, Shift Arithmetic Right two bits. Sign bit copied to high 2 bits.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "RRC",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 110 NRR",
+          "description": "N=0, Rotate right one bit using C as bit 16. N=1 Rotate right two bits using C as bit 16 and OV as bit 17.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SARC",
+          "operands": "RR<, n>",
+          "cycles": "6 (n=1), 8 (n=2)",
+          "opcode_format": "0 001 111 NRR",
+          "description": "N=0, Shift Arithmetic Right one bit, thru C. Sign bit copied to high bit. N=1, Shift Arithmetic Right two bits, thru OV and C. Sign bit copied to high 2 bits.",
+          "status_change": "S, Z, C, OV"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.4",
+      "title": "CONTROL",
+      "instructions": [
+        {
+          "mnemonic": "HLT",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 000",
+          "description": "HaLT after next interruptible instruction is executed. Resume on start",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "SDBD",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 001",
+          "description": "Set Double Byte Data for the next instruction which must be an external reference instruction.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "EIS",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 010",
+          "description": "Enable Interrupt System. Not Interruptable.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "DIS",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 011",
+          "description": "Disable Interrupt System. Not Interruptable.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "TCI",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 101",
+          "description": "Terminate Current Interrupt. Not Interruptable.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "CLRC",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 110",
+          "description": "CLeaR Carry to zero. Not Interruptable.",
+          "status_change": "C"
+        },
+        {
+          "mnemonic": "SETC",
+          "operands": "",
+          "cycles": "4",
+          "opcode_format": "0 000 000 111",
+          "description": "SET Carry to one. Not interruptable.",
+          "status_change": "C"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.5",
+      "title": "JUMP",
+      "notes": [
+        "Bits 2-7 of the second word form bits 10-16 of the Destination Address.",
+        "Bits 0-9 of the third word form bits 0-9 of the Destination Address."
+      ],
+      "instructions": [
+        {
+          "mnemonic": "J",
+          "operands": "DA",
+          "cycles": "X",
+          "opcode_format": "Word 1: 0 000 000 100, Word 2: X XX1 1AA AAA, Word 3: X XXX AAA A00",
+          "description": "Jump to address. Program counter is set to 16 bits of A's.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "JE",
+          "operands": "DA",
+          "cycles": "",
+          "opcode_format": "Word 1: 0 000 000 100, Word 2: X XX1 1AA AAA, Word 3: X XXX AAA A01",
+          "description": "Jump to address. Enable interrupt system. Program counter is set to 16 bits of A's.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "JD",
+          "operands": "DA",
+          "cycles": "",
+          "opcode_format": "Word 1: 0 000 000 100, Word 2: X XX1 1AA AAA, Word 3: X XXX AAA A10",
+          "description": "Jump to address. Disable interrupt system. Program counter is set to 16 bits of A's.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "JSR",
+          "operands": "BB, DA",
+          "cycles": "",
+          "opcode_format": "Word 1: 0 001 BAA AAA, Word 2: X XX1 BAA AAA, Word 3: X XXX AAA A00",
+          "description": "Jump and Save Return address (PC+3) in register designated by 1BB. Program counter is set to 16 bits of A's. BB != 11.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "JSRE",
+          "operands": "BB, DA",
+          "cycles": "",
+          "opcode_format": "Word 1: 0 000 BAA AAA, Word 2: X XX1 BAA AAA, Word 3: X XXX AAA A01",
+          "description": "Jump and Save Return and Enable interrupt system. Return (PC+3) is saved in register 1BB. Program counter is set to 16 bits of A's. BB != 11.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "JSRD",
+          "operands": "BB, DA",
+          "cycles": "",
+          "opcode_format": "Word 1: 0 000 BAA AAA, Word 2: X XX1 BAA AAA, Word 3: X XXX AAA A10",
+          "description": "Jump and Save Return and Disable interrupt system. Return (PC+3) is saved in register 1BB. Program counter is set to 16 bits of A's. BB != 11.",
+          "status_change": ""
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.6",
+      "title": "BRANCHES",
+      "notes": [
+        "The Branch instructions are Program Counter Relative, i.e. the Effective Address = PC + Displacement.",
+        "P-P is the Displacement and S is 0 for + and 1 for -.",
+        "For a forward branch an addition is performed.",
+        "For a backward branch a one's complement subtraction is performed.",
+        "Computation performed on PC+2.",
+        "7/9: 7 Cycles if test condition is not true, 9 cycles if true."
+      ],
+      "instructions": [
+        {
+          "mnemonic": "B",
+          "operands": "DA",
+          "cycles": "9",
+          "opcode_format": "1 000 S00 000 P PPP PPP PPP",
+          "description": "Branch unconditional. Program counter relative (+1025 to 1024)",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "NOPP",
+          "operands": "DA",
+          "cycles": "7",
+          "opcode_format": "1 000 S01 000 P PPP PPP PPP",
+          "description": "No Operation, two words",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BC (BLGE)",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 001 P PPP PPP PPP",
+          "description": "Branch on Carry (Branch if Logical Greater Than or Equal). C=1.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BNC (BLLT)",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 001 P PPP PPP PPP",
+          "description": "Branch on No Carry (Branch if Logical Less Than). C=0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BOV",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 010 P PPP PPP PPP",
+          "description": "Branch on Overflow. OV=1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BNOV",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 010 P PPP PPP PPP",
+          "description": "Branch on No Overflow. OV=0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BPL",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 011 P PPP PPP PPP",
+          "description": "Branch on Plus. S=0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BMI",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 011 P PPP PPP PPP",
+          "description": "Branch on Minus. S=1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BZE (BEQ)",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 100 P PPP PPP PPP",
+          "description": "Branch on Zero (Branch if Equal). Z=1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BNZE (BNEQ)",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 100 P PPP PPP PPP",
+          "description": "Branch on No Zero (Branch if Not Equal). Z=0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BLT",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 101 P PPP PPP PPP",
+          "description": "Branch if Less Than. S XOR OV = 1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BGE",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 101 P PPP PPP PPP",
+          "description": "Branch if Greater than or Equal. S XOR OV = 0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BLE",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 110 P PPP PPP PPP",
+          "description": "Branch if Less than or Equal. Z | (S XOR OV) = 1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BGT",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 110 P PPP PPP PPP",
+          "description": "Branch if Greater Than. Z | (S XOR OV) = 0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BUSC",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S00 111 P PPP PPP PPP",
+          "description": "Branch if Unequal Sign and Carry. C XOR S = 1",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BESC",
+          "operands": "DA",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S01 111 P PPP PPP PPP",
+          "description": "Branch on Equal Sign and Carry. C XOR S = 0",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "BEXT",
+          "operands": "DA, EEEE",
+          "cycles": "7/9",
+          "opcode_format": "1 000 S1E EEE P PPP PPP PPP",
+          "description": "Branch if External condition is True. Field EEEE is externally decoded to select 1 of 16 conditions.",
+          "status_change": ""
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.7",
+      "title": "DIRECT ADDRESSED DATA — MEMORY",
+      "instructions": [
+        {
+          "mnemonic": "MVO",
+          "operands": "SSS, DA",
+          "cycles": "11",
+          "opcode_format": "0 000 SSS 001 A AAA AAA AAA AAA AAA",
+          "description": "MoVe Out data from register SSS to address A - A. Not interruptible.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "MVI",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 010 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "MoVe In data from address A - A to register DDD.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "ADD",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 011 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "ADD data from address A - A to register DDD. Results DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SUB",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 100 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "SUBtract data from address A - A from register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "CMP",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 101 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "CoMPare data from address A-A with register SSS by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "AND",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 110 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "logical AND data from address A - A with register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "XOR",
+          "operands": "SA, DDD",
+          "cycles": "10",
+          "opcode_format": "0 111 DDD 001 A AAA AAA AAA AAA AAA",
+          "description": "eXclusive OR data from address A - A with register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.8",
+      "title": "IMMEDIATE DATA - REGISTER",
+      "instructions": [
+        {
+          "mnemonic": "MVOI",
+          "operands": "SSS, DA",
+          "cycles": "9",
+          "opcode_format": "0 000 SSS 111 I III III III III III",
+          "description": "MoVe Out Immediate data from register SSS to PC + 1 (field). Not interruptible.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "MVII",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 010 DDD 111 I III III III III III",
+          "description": "Move In Immediate data to register DDD from PC + 1 (field).",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "ADDI",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 011 DDD 111 I III III III III III",
+          "description": "Add Immediate data to contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SUBI",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 100 DDD 111 I III III III III III",
+          "description": "SUBtract Immediate data from contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "CMPI",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 101 DDD 111 I III III III III III",
+          "description": "CoMPare Immediate data from contents of register SSS by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "ANDI",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 110 DDD 111 I III III III III III",
+          "description": "logical AND Immediate data with contest of register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "XORI",
+          "operands": "SA, DDD",
+          "cycles": "8",
+          "opcode_format": "0 111 DDD 111 I III III III III III",
+          "description": "eXclusive OR Immediate data with the contents of register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.9",
+      "title": "INDIRECT ADDRESSED DATA-REGISTER",
+      "notes": [
+        "MMM: Source data is located at the address contained in Register R1 - R6.",
+        "MMM=4, 5: post-increment R4 or R5.",
+        "MMM=6: MVO instruction post-increment R6. PUSH data from Register SSS to the Stack. Other instructions pre-decrement R. PULL data from the Stack to be used at the first operand.",
+        "8/11: 11 Cycles if MMM = 6, 8 Cycles otherwise."
+      ],
+      "instructions": [
+        {
+          "mnemonic": "MVO@",
+          "operands": "SSS, MMM",
+          "cycles": "9",
+          "opcode_format": "0 000 SSS MMM",
+          "description": "MoVe Out data from register SSS to the address in register MMM. Note: MMM=4,5,6 or 7 not supported. Not interruptible.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "PSHR",
+          "operands": "SSS",
+          "cycles": "9",
+          "opcode_format": "0 000 SSS 110",
+          "description": "PUSH data from Register SSS to the stack. Not interruptible.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "MVI@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 010 DDD MMM",
+          "description": "Move In data from the address in register MMM to register DDD.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "PULR",
+          "operands": "DDD",
+          "cycles": "11",
+          "opcode_format": "0 010 DDD 110",
+          "description": "PULL data from the stack to Register DDD.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "ADD@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 011 DDD MMM",
+          "description": "ADD data located at the address in register MMM to contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SUB@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 100 DDD MMM",
+          "description": "SUBtract data located at the address in register MMM from contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "CMP@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 101 DDD MMM",
+          "description": "CoMPare data located at the address in register MMM with contents of register SSS by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "AND@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 110 DDD MMM",
+          "description": "logical AND contents of register DDD with data located at the address in register MMM. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "XOR@",
+          "operands": "MMM, DDD",
+          "cycles": "8/11",
+          "opcode_format": "0 111 DDD MMM",
+          "description": "eXclusive OR contents of register DDD with data located at the address in register MMM. Results to DDD.",
+          "status_change": "S, Z"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.10",
+      "title": "IMMEDIATE DOUBLE BYTE DATA - REGISTER",
+      "notes": [
+        "I-I: UUUUUUUULLLLLLLL; L-L indicates low byte of literal; U - U indicates upper byte.",
+        "The SDBD instruction is normally supplied by the assembler as required to properly generate machine code."
+      ],
+      "instructions": [
+        {
+          "mnemonic": "SDBD MVII",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 010 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "Move In Immediate double byte data to register DDD.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "SDBD ADDI",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 011 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "ADD Immediate double byte data to contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD SUBI",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 100 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "SUBtract Immediate double byte data from contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD CMPI",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 101 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "CoMPare Immediate double byte data with contents of register SSS by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD ANDI",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 110 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "logical AND Immediate double byte data with contents of register DDD. Results to register DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "SDBD XORI",
+          "operands": "I-I, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 111 DDD 111, LLL LLL LLL LLL LLL, UUU UUU UUU UUU UUU",
+          "description": "eXclusive OR Immediate double byte data with contents of register DDD. Results to register DDD.",
+          "status_change": "S, Z"
+        }
+      ]
+    },
+    {
+      "section_id": "3.6.11",
+      "title": "INDIRECT ADDRESSED DOUBLE BYTE DATA - REGISTER",
+      "instructions": [
+        {
+          "mnemonic": "SDBD MVI@",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 010 DDD MMM",
+          "description": "Move In double byte data from the address in register MMM to register DDD.",
+          "status_change": ""
+        },
+        {
+          "mnemonic": "SDBD ADDE",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 011 DDD MMM",
+          "description": "ADD double byte data located at the address in register MMM to contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD SUB",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 100 DDD MMM",
+          "description": "SUBtract double byte data located at the address in register MMM from contents of register DDD. Results to DDD.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD CMP@",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 101 DDD MMM",
+          "description": "CoMPare double byte data located at the address in register MMM with the contents of register SSS by subtraction. Results not stored.",
+          "status_change": "S, Z, C, OV"
+        },
+        {
+          "mnemonic": "SDBD AND@",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 110 DDD MMM",
+          "description": "logical AND double byte data located at the address in register MMM with contents of register DDD. Results to DDD.",
+          "status_change": "S, Z"
+        },
+        {
+          "mnemonic": "SDBD XORO",
+          "operands": "MMM, DDD",
+          "cycles": "14",
+          "opcode_format": "0 000 000 001, 0 111 DDD MMM",
+          "description": "eXclusive OR double byte data located at the address in register MMM with contents of regsiter DDD. Results to DDD.",
+          "status_change": "S, Z"
+        }
+      ]
+    }
+  ],
+  "symbolic_notation": {
+    "section_id": "3.6.12",
+    "description": "The following symbolic notation is used in all CP1600 instruction documentation.",
+    "entries": {
+      "address_modes": [
+        { "mode": "R", "description": "register" },
+        { "mode": "blank", "description": "direct address" },
+        { "mode": "@", "description": "indirect address" },
+        { "mode": "I", "description": "immediate data" }
+      ],
+      "functions": [
+        { "symbol": "+", "description": "addition" },
+        { "symbol": "-", "description": "subtraction" },
+        { "symbol": "|", "description": "inclusive OR" },
+        { "symbol": "^", "description": "exclusive OR" },
+        { "symbol": "&", "description": "AND" },
+        { "symbol": "()", "description": "contents of" },
+        { "symbol": "<-", "description": "is replaced by" },
+        { "symbol": "<>", "description": "optional operand" }
+      ],
+      "register_address_mode_mmm": [
+        { "code": "000", "description": "direct address in location following instruction" },
+        { "code": "001", "description": "indirect address for Register 1" },
+        { "code": "010", "description": "indirect address for Register 2" },
+        { "code": "011", "description": "indirect address for Register 3" },
+        { "code": "100", "description": "indirect address for Register 4, post increment" },
+        { "code": "101", "description": "indirect address for Register 5, post increment" },
+        { "code": "110", "description": "indirect address for Register 6, post increment for MVO only; indirect address for Register 6, pre decrement for all instructions except MVC" },
+        { "code": "111", "description": "indirect address for Register 7, post increment. (Immediate data in location following instruction.)" }
+      ],
+      "operands": [
+        { "symbol": "SSS", "description": "Source Register" },
+        { "symbol": "DDD", "description": "Destination Register" },
+        { "symbol": "MMM", "description": "Register Address Mode" },
+        { "symbol": "RR", "description": "Register (0-3)" },
+        { "symbol": "N", "description": "Number of Shifts (0=1, 1=2)" },
+        { "symbol": "EEEE", "description": "External Condition Code (0-15)" },
+        { "symbol": "DA", "description": "Destination Address" },
+        { "symbol": "SA", "description": "Source Address" },
+        { "symbol": "I-I", "description": "Immediate data word" },
+        { "symbol": "P-P", "description": "Address displacement for Branch" }
+      ],
+      "status_flags": [
+        { "symbol": "S", "description": "Sign bit" },
+        { "symbol": "Z", "description": "Zero bit" },
+        { "symbol": "C", "description": "Carry bit" },
+        { "symbol": "OV", "description": "Overflow bit" }
+      ]
+    }
+  }
+}
