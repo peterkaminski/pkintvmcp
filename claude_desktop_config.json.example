@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "pkintvmcp": {
+      "comment": "CP-1600/Intellivision debugger MCP server",
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/pkintvmcp/packages/mcp-cpu/dist/index.js"
+      ],
+      "env": {}
+    }
+  }
+}

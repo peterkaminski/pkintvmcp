@@ -4,6 +4,9 @@ resources/
 # Claude Code user-specific settings
 .claude/
 
+# Toolchain binaries (built by bootstrap script)
+tools/bin/
+
 # Dependencies
 node_modules/
 package-lock.json

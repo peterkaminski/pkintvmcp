@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# as1600 wrapper - Assembler for CP-1600 / Intellivision
+#
+# This wrapper ensures the toolchain is bootstrapped and then
+# executes the platform-specific as1600 binary.
+#
+# Usage:
+#   ./tools/as1600 [args]
+#   npm run as1600 -- [args]
+#
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PLATFORM="$(uname -s)-$(uname -m)"
+BIN="$ROOT/tools/bin/$PLATFORM/as1600"
+
+# Bootstrap if not already done
+if [[ ! -x "$BIN" ]]; then
+  echo "Toolchain not found, running bootstrap..."
+  "$ROOT/tools/bootstrap-sdk1600.sh"
+fi
+
+# Execute as1600 with all arguments
+exec "$BIN" "$@"

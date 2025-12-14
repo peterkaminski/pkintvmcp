@@ -196,6 +196,56 @@ The `resources/` folder contains background materials with different copyright r
 3. **Clear error messages**: MCP tools must be self-documenting for Claude
 4. **Deterministic behavior**: Critical for reproducible debugging
 
+## Toolchain Usage
+
+**IMPORTANT**: This repo includes SDK-1600 tools (as1600, bin2rom) for assembling CP-1600 programs. Always use repo-relative paths - do NOT rely on system PATH or user shell configuration.
+
+### Assembling ROMs
+
+**Bootstrap the toolchain (first time only):**
+```bash
+npm run toolchain:bootstrap
+```
+
+This builds `as1600` and `bin2rom` from the jzintv source and installs them to `tools/bin/<platform>/`.
+
+**Assemble .asm files:**
+```bash
+# Via npm (recommended for agents)
+npm run as1600 -- myfile.asm -o myfile.bin
+
+# Or directly with wrapper
+./tools/as1600 myfile.asm -o myfile.bin
+```
+
+The wrapper scripts (`tools/as1600`, `tools/bin2rom`) automatically bootstrap if needed, so you can always just call them directly.
+
+**Key Principles for Agents:**
+1. **Never assume tools are in PATH** - Always use `./tools/as1600` or `npm run as1600`
+2. **Bootstrap is idempotent** - Safe to run multiple times, skips if already done
+3. **Platform-independent** - Works on macOS (Intel/ARM) and Linux automatically
+4. **Repo-local binaries** - Tools live in `tools/bin/<platform>/` (gitignored)
+
+### Testing ROMs
+
+**CLI runner (standalone):**
+```bash
+npm run cli:hello                    # Quick test with hello-world
+npm run cli:run -- path/to/rom.bin  # Run any ROM
+```
+
+**With trace output:**
+```bash
+npm run cli:run -- path/to/rom.bin --trace --verbose
+```
+
+### Expected Artifacts
+
+When assembling a .asm file, you'll get:
+- `.bin` - Binary ROM file (loadable by emulator)
+- `.lst` - Listing file (assembly with addresses)
+- `.sym` - Symbol table (labels and their addresses)
+
 ## Development Workflow
 
 1. **Read docs/PROJECT_SETUP.md**: Repository structure and build system

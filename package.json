@@ -13,7 +13,13 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "lint": "turbo run lint",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "toolchain:bootstrap": "bash tools/bootstrap-sdk1600.sh",
+    "as1600": "bash tools/as1600",
+    "bin2rom": "bash tools/bin2rom",
+    "cli:hello": "node packages/cli/dist/run-example.js examples/01-hello-world/hello.bin",
+    "cli:run": "node packages/cli/dist/run-example.js",
+    "mcp:start": "node packages/mcp-cpu/dist/index.js"
   },
   "devDependencies": {
     "turbo": "^1.11.0",

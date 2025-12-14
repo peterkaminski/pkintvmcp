@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# bin2rom wrapper - Convert .bin to .rom for Intellivision
+#
+# This wrapper ensures the toolchain is bootstrapped and then
+# executes the platform-specific bin2rom binary.
+#
+# Usage:
+#   ./tools/bin2rom [args]
+#   npm run bin2rom -- [args]
+#
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PLATFORM="$(uname -s)-$(uname -m)"
+BIN="$ROOT/tools/bin/$PLATFORM/bin2rom"
+
+# Bootstrap if not already done
+if [[ ! -x "$BIN" ]]; then
+  echo "Toolchain not found, running bootstrap..."
+  "$ROOT/tools/bootstrap-sdk1600.sh"
+fi
+
+# Execute bin2rom with all arguments
+exec "$BIN" "$@"
