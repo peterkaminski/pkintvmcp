@@ -8,7 +8,7 @@ pkIntvMCP is an emulator and debugging tool for the Intellivision's CP-1600 micr
 
 **ALPHA CODE**
 
-This project is under active development, and different parts of the code and/or documentation may not match in the moment. Tests may not exist or may fail. It's all expected to converge and be reviewed at a later date.
+This project is under active development, and different parts of the code and/or documentation may not match in the moment. Tests may not exist or may fail. It's all expected to converge and to be completely reviewed and tested later in the project.
 
 As of 2025-12-14, the CPU is substantially complete. Internal unit tests pass, but external and integration tests have not been completed. There may be bugs, possibly significant.
 
