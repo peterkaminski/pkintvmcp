@@ -164,7 +164,7 @@ describe('Executor Dispatch', () => {
   describe('invalid opcodes', () => {
     it('should throw on unknown opcode', () => {
       const instruction = createTestInstruction('INVALID' as Opcode, []);
-      expect(() => executor.execute(instruction)).toThrow('Unknown opcode: INVALID');
+      expect(() => executor.execute(instruction)).toThrow('Unimplemented opcode: INVALID');
     });
 
     it('should throw on undefined opcode', () => {
@@ -172,7 +172,7 @@ describe('Executor Dispatch', () => {
         ...createTestInstruction(Opcode.HLT, []),
         opcode: undefined as unknown as Opcode,
       };
-      expect(() => executor.execute(instruction)).toThrow('Unknown opcode: undefined');
+      expect(() => executor.execute(instruction)).toThrow('Unimplemented opcode: undefined');
     });
 
     it('should throw on null opcode', () => {
@@ -180,7 +180,7 @@ describe('Executor Dispatch', () => {
         ...createTestInstruction(Opcode.HLT, []),
         opcode: null as unknown as Opcode,
       };
-      expect(() => executor.execute(instruction)).toThrow('Unknown opcode: null');
+      expect(() => executor.execute(instruction)).toThrow('Unimplemented opcode: null');
     });
   });
 

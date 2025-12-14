@@ -215,7 +215,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000); // PC not changed
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
 
@@ -256,7 +256,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances by instruction length when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -282,7 +282,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -308,7 +308,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -334,7 +334,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -360,7 +360,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -386,7 +386,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -412,7 +412,7 @@ describe('Executor - Conditional Branches (Simple Flags)', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -463,7 +463,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
 
@@ -475,7 +475,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -513,7 +513,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
 
@@ -525,7 +525,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -563,7 +563,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -589,7 +589,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
 
@@ -601,7 +601,7 @@ describe('Executor - Signed Comparison Branches', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000);
+      expect(cpu.getPC()).toBe(0x5001); // PC advances when branch not taken
       expect(cpu.getState().cycles).toBe(6);
     });
   });
@@ -881,7 +881,7 @@ describe('Executor - Control Instructions', () => {
 
       executor.execute(inst);
 
-      expect(cpu.getPC()).toBe(0x5000); // PC unchanged
+      expect(cpu.getPC()).toBe(0x5001); // PC advances (NOPP still advances PC)
       expect(cpu.getRegister(1)).toBe(0x1234); // Registers unchanged
       const flags = cpu.getFlags();
       expect(flags.C).toBe(true);
