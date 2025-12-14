@@ -4,6 +4,16 @@
 
 pkIntvMCP is an emulator and debugging tool for the Intellivision's CP-1600 microprocessor that lets you debug programs conversationally using AI. Instead of cryptic debugger commands, just ask questions like "Why does my ROM crash at address $5020?" or "Where is this sprite data stored?"
 
+## Project Status (IMPORTANT)
+
+**ALPHA CODE**
+
+This project is under active development, and different parts of the code and/or documentation may not match in the moment. Tests may not exist or may fail. It's all expected to converge and be reviewed at a later date.
+
+As of 2025-12-14, the CPU is substantially complete. Internal unit tests pass, but external and integration tests have not been completed. There may be bugs, possibly significant.
+
+The CLI test harness and MCP server can both run code. Right now, it should be able regular CP-1600 code, but it's not set up to run Intellivision carts yet, even though that's the ultimate intention.
+
 ## What Is This?
 
 If you're working on Intellivision homebrew games or reverse-engineering classic cartridges, you know debugging CP-1600 assembly can be tedious. Traditional debuggers require memorizing commands and interpreting raw memory dumps.
