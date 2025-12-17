@@ -40,11 +40,17 @@ export class Executor {
       case Opcode.MVI:
         this.executeMvi(instruction);
         break;
+      case Opcode.MVII:
+        this.executeMvii(instruction);
+        break;
       case Opcode.MVI_AT:
         this.executeMviAt(instruction);
         break;
       case Opcode.MVO:
         this.executeMvo(instruction);
+        break;
+      case Opcode.MVOI:
+        this.executeMvoi(instruction);
         break;
       case Opcode.MVO_AT:
         this.executeMvoAt(instruction);
@@ -57,17 +63,32 @@ export class Executor {
       case Opcode.ADD:
         this.executeAdd(instruction);
         break;
+      case Opcode.ADDI:
+        this.executeAddi(instruction);
+        break;
+      case Opcode.ADD_AT:
+        this.executeAddAt(instruction);
+        break;
       case Opcode.SUBR:
         this.executeSubr(instruction);
         break;
       case Opcode.SUB:
         this.executeSub(instruction);
         break;
+      case Opcode.SUBI:
+        this.executeSubi(instruction);
+        break;
+      case Opcode.SUB_AT:
+        this.executeSubAt(instruction);
+        break;
       case Opcode.INCR:
         this.executeIncr(instruction);
         break;
       case Opcode.DECR:
         this.executeDecr(instruction);
+        break;
+      case Opcode.ADCR:
+        this.executeAdcr(instruction);
         break;
 
       // Logical
@@ -77,14 +98,29 @@ export class Executor {
       case Opcode.AND:
         this.executeAnd(instruction);
         break;
+      case Opcode.ANDI:
+        this.executeAndi(instruction);
+        break;
+      case Opcode.AND_AT:
+        this.executeAndAt(instruction);
+        break;
       case Opcode.XORR:
         this.executeXorr(instruction);
         break;
       case Opcode.XOR:
         this.executeXor(instruction);
         break;
+      case Opcode.XORI:
+        this.executeXori(instruction);
+        break;
+      case Opcode.XOR_AT:
+        this.executeXorAt(instruction);
+        break;
       case Opcode.CLRR:
         this.executeClrr(instruction);
+        break;
+      case Opcode.COMR:
+        this.executeComr(instruction);
         break;
 
       // Control
@@ -93,6 +129,15 @@ export class Executor {
         break;
       case Opcode.CMP:
         this.executeCmp(instruction);
+        break;
+      case Opcode.CMPI:
+        this.executeCmpi(instruction);
+        break;
+      case Opcode.CMP_AT:
+        this.executeCmpAt(instruction);
+        break;
+      case Opcode.CMPR:
+        this.executeCmpr(instruction);
         break;
       case Opcode.HLT:
         this.executeHlt(instruction);
@@ -104,6 +149,12 @@ export class Executor {
         break;
       case Opcode.J:
         this.executeJ(instruction);
+        break;
+      case Opcode.JD:
+        this.executeJD(instruction);
+        break;
+      case Opcode.JE:
+        this.executeJE(instruction);
         break;
       case Opcode.JR:
         this.executeJr(instruction);
@@ -148,6 +199,15 @@ export class Executor {
       case Opcode.BGT:
         this.executeBGT(instruction);
         break;
+      case Opcode.BUSC:
+        this.executeBUSC(instruction);
+        break;
+      case Opcode.BESC:
+        this.executeBESC(instruction);
+        break;
+      case Opcode.BEXT:
+        this.executeBEXT(instruction);
+        break;
 
       // Subroutines
       case Opcode.JSR:
@@ -169,6 +229,9 @@ export class Executor {
         break;
 
       // Control Instructions
+      case Opcode.NOP:
+        this.executeNOP(instruction);
+        break;
       case Opcode.NOPP:
         this.executeNOPP(instruction);
         break;
@@ -177,6 +240,27 @@ export class Executor {
         break;
       case Opcode.DIS:
         this.executeDIS(instruction);
+        break;
+      case Opcode.TCI:
+        this.executeTCI(instruction);
+        break;
+      case Opcode.CLRC:
+        this.executeCLRC(instruction);
+        break;
+      case Opcode.SETC:
+        this.executeSETC(instruction);
+        break;
+      case Opcode.SDBD:
+        this.executeSDBD(instruction);
+        break;
+      case Opcode.SIN:
+        this.executeSIN(instruction);
+        break;
+      case Opcode.GSWD:
+        this.executeGSWD(instruction);
+        break;
+      case Opcode.RSWD:
+        this.executeRSWD(instruction);
         break;
 
       // Shift Instructions
@@ -291,6 +375,36 @@ export class Executor {
   }
 
   /**
+   * MVII - Move immediate to register
+   * Format: MVII #imm, Rdst
+   * Operation: Rdst = #imm
+   * Flags: None updated per CP-1600 manual
+   * Cycles: 8 (normal), 10 (SDBD mode)
+   */
+  private executeMvii(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Normalize immediate to 16-bit
+    const value = toUint16(imm);
+
+    // Write to destination register
+    this.cpu.setRegister(dst, value);
+
+    // No flags updated per CP-1600 manual (differs from MVI)
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `MVII #${imm.toString(16)} -> R${dst}: value=${value.toString(16)}, sdbd=${inst.sdbd}`
+      );
+    }
+  }
+
+  /**
    * MVO - Move register to memory
    * Format: MVO Rsrc, addr
    * Operation: memory[addr] = Rsrc
@@ -352,6 +466,33 @@ export class Executor {
       console.log(
         `MVI@ R${ptrReg}[@${address.toString(16)}] -> R${dst}: value=${value.toString(16)}, R${ptrReg}++`
       );
+    }
+  }
+
+  /**
+   * MVOI - Move register to immediate address
+   * Format: MVOI Rsrc, addr
+   * Operation: memory[addr] = Rsrc
+   * Flags: None updated
+   * Cycles: 9
+   */
+  private executeMvoi(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const addr = inst.operands[1].value;
+
+    // Read source register
+    const value = this.cpu.getRegister(src);
+
+    // Write to memory at immediate address
+    this.memory.write(addr, value);
+
+    // No flags updated
+
+    // Add cycles
+    this.cpu.addCycles(9);
+
+    if (this.options.trace) {
+      console.log(`MVOI R${src} -> [${addr.toString(16)}]: value=${value.toString(16)}`);
     }
   }
 
@@ -504,6 +645,96 @@ export class Executor {
     }
   }
 
+  /**
+   * ADDI - Add immediate to register
+   * Format: ADDI #imm, Rdst
+   * Operation: Rdst = Rdst + #imm
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 8 (normal), 10 (SDBD)
+   */
+  private executeAddi(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const immValue = toUint16(imm);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform addition
+    const result = dstValue + immValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, immValue, false);
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`ADDI #${imm.toString(16)} + R${dst} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
+  /**
+   * SUBI - Subtract immediate from register
+   * Format: SUBI #imm, Rdst
+   * Operation: Rdst = Rdst - #imm
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 8 (normal), 10 (SDBD)
+   */
+  private executeSubi(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const immValue = toUint16(imm);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform subtraction
+    const result = dstValue - immValue;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, immValue, true);
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`SUBI R${dst} - #${imm.toString(16)} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
+  /**
+   * ADCR - Add carry to register
+   * Format: ADCR Rdst
+   * Operation: Rdst = Rdst + C
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeAdcr(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const dstValue = this.cpu.getRegister(dst);
+    const flags = this.cpu.getFlags();
+
+    // Get carry as 0 or 1
+    const carry = flags.C ? 1 : 0;
+
+    // Perform addition
+    const result = dstValue + carry;
+    this.cpu.setRegister(dst, result);
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, carry, false);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`ADCR R${dst} + ${carry} = ${toUint16(result).toString(16)}`);
+    }
+  }
+
   // ========== Logical Instructions ==========
 
   /**
@@ -584,6 +815,99 @@ export class Executor {
 
     if (this.options.trace) {
       console.log(`CLRR R${dst} = 0`);
+    }
+  }
+
+  /**
+   * ANDI - Bitwise AND immediate with register
+   * Format: ANDI #imm, Rdst
+   * Operation: Rdst = Rdst & #imm
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 8 (normal), 10 (SDBD)
+   */
+  private executeAndi(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const immValue = toUint16(imm);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform AND
+    const result = dstValue & immValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`ANDI #${imm.toString(16)} & R${dst} = ${result.toString(16)}`);
+    }
+  }
+
+  /**
+   * XORI - Bitwise XOR immediate with register
+   * Format: XORI #imm, Rdst
+   * Operation: Rdst = Rdst ^ #imm
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 8 (normal), 10 (SDBD)
+   */
+  private executeXori(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const immValue = toUint16(imm);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform XOR
+    const result = dstValue ^ immValue;
+    this.cpu.setRegister(dst, result);
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(`XORI #${imm.toString(16)} ^ R${dst} = ${result.toString(16)}`);
+    }
+  }
+
+  /**
+   * COMR - One's complement register
+   * Format: COMR Rdst
+   * Operation: Rdst = ~Rdst
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 6
+   */
+  private executeComr(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const value = this.cpu.getRegister(dst);
+
+    // One's complement (bitwise NOT)
+    const result = toUint16(~value);
+
+    // Update register
+    this.cpu.setRegister(dst, result);
+
+    // Update flags (S and Z only)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`COMR ~R${dst} = ${result.toString(16)}`);
     }
   }
 
@@ -676,6 +1000,62 @@ export class Executor {
 
     if (this.options.trace) {
       console.log(`J -> ${target.toString(16)}`);
+    }
+  }
+
+  /**
+   * JD - Jump and Disable Interrupts
+   * Format: JD target
+   * Operation: PC = target, disable interrupts
+   * Flags: None updated
+   * Cycles: 7
+   */
+  private executeJD(inst: Instruction): void {
+    const target = inst.operands[0].value;
+
+    // Set PC to target address
+    this.cpu.setRegister(7, toUint16(target));
+
+    // Disable interrupts (Phase 3 - for now just track the flag)
+    const state = this.cpu.getState();
+    state.interruptsEnabled = false;
+    this.cpu.setState(state);
+
+    // No flags updated
+
+    // Add cycles
+    this.cpu.addCycles(7);
+
+    if (this.options.trace) {
+      console.log(`JD -> ${target.toString(16)} (IE=0)`);
+    }
+  }
+
+  /**
+   * JE - Jump and Enable Interrupts
+   * Format: JE target
+   * Operation: PC = target, enable interrupts
+   * Flags: None updated
+   * Cycles: 7
+   */
+  private executeJE(inst: Instruction): void {
+    const target = inst.operands[0].value;
+
+    // Set PC to target address
+    this.cpu.setRegister(7, toUint16(target));
+
+    // Enable interrupts (Phase 3 - for now just track the flag)
+    const state = this.cpu.getState();
+    state.interruptsEnabled = true;
+    this.cpu.setState(state);
+
+    // No flags updated
+
+    // Add cycles
+    this.cpu.addCycles(7);
+
+    if (this.options.trace) {
+      console.log(`JE -> ${target.toString(16)} (IE=1)`);
     }
   }
 
@@ -1059,6 +1439,98 @@ export class Executor {
     }
   }
 
+  /**
+   * BUSC - Branch if Unequal Sign and Carry
+   * Format: BUSC target
+   * Operation: if (S XOR C) = 1 then PC = target
+   * Flags: None updated
+   * Cycles: 7 (taken), 6 (not taken) - using 7/9 from manual
+   */
+  private executeBUSC(inst: Instruction): void {
+    const target = inst.operands[0].value;
+    const flags = this.cpu.getFlags();
+    const condition = flags.S !== flags.C; // XOR
+
+    if (condition) {
+      // Branch taken
+      this.cpu.setRegister(7, toUint16(target));
+      this.cpu.addCycles(9);
+
+      if (this.options.trace) {
+        console.log(`BUSC -> ${target.toString(16)} (taken, S=${flags.S}, C=${flags.C})`);
+      }
+    } else {
+      // Branch not taken
+      this.cpu.addCycles(7);
+
+      if (this.options.trace) {
+        console.log(`BUSC (not taken, S=${flags.S}, C=${flags.C})`);
+      }
+    }
+  }
+
+  /**
+   * BESC - Branch on Equal Sign and Carry
+   * Format: BESC target
+   * Operation: if (S XOR C) = 0 then PC = target
+   * Flags: None updated
+   * Cycles: 7 (not taken), 9 (taken)
+   */
+  private executeBESC(inst: Instruction): void {
+    const target = inst.operands[0].value;
+    const flags = this.cpu.getFlags();
+    const condition = flags.S === flags.C; // XNOR
+
+    if (condition) {
+      // Branch taken
+      this.cpu.setRegister(7, toUint16(target));
+      this.cpu.addCycles(9);
+
+      if (this.options.trace) {
+        console.log(`BESC -> ${target.toString(16)} (taken, S=${flags.S}, C=${flags.C})`);
+      }
+    } else {
+      // Branch not taken
+      this.cpu.addCycles(7);
+
+      if (this.options.trace) {
+        console.log(`BESC (not taken, S=${flags.S}, C=${flags.C})`);
+      }
+    }
+  }
+
+  /**
+   * BEXT - Branch if External condition is True
+   * Format: BEXT target, condition
+   * Operation: if external condition is true then PC = target
+   * Flags: None updated
+   * Cycles: 7 (not taken), 9 (taken)
+   * Note: Phase 1 - no external conditions, always not taken
+   */
+  private executeBEXT(inst: Instruction): void {
+    const target = inst.operands[0].value;
+
+    // Phase 1: No external condition support, always not taken
+    const condition = false;
+
+    if (condition) {
+      // Branch taken (never in Phase 1)
+      this.cpu.setRegister(7, toUint16(target));
+      this.cpu.addCycles(9);
+
+      if (this.options.trace) {
+        console.log(`BEXT -> ${target.toString(16)} (taken)`);
+      }
+    } else {
+      // Branch not taken (always in Phase 1)
+      this.cpu.addCycles(7);
+
+      if (this.options.trace) {
+        console.log(`BEXT (not taken, Phase 1: no external conditions)`);
+      }
+    }
+  }
+
   // ========== Subroutine Instructions ==========
 
   /**
@@ -1274,6 +1746,183 @@ export class Executor {
 
     if (this.options.trace) {
       console.log('DIS - Interrupts disabled');
+    }
+  }
+
+  /**
+   * NOP - No Operation
+   * Format: NOP
+   * Operation: No operation
+   * Flags: None updated
+   * Cycles: 6
+   */
+  private executeNOP(_inst: Instruction): void {
+    // No operation
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log('NOP');
+    }
+  }
+
+  /**
+   * TCI - Terminate Current Interrupt
+   * Format: TCI
+   * Operation: Terminate current interrupt (Phase 3)
+   * Flags: None updated
+   * Cycles: 4
+   */
+  private executeTCI(_inst: Instruction): void {
+    // Phase 3: Would terminate current interrupt
+    // For Phase 1, just acknowledge the instruction
+
+    // Add cycles
+    this.cpu.addCycles(4);
+
+    if (this.options.trace) {
+      console.log('TCI - Terminate current interrupt (Phase 1: no-op)');
+    }
+  }
+
+  /**
+   * CLRC - Clear Carry Flag
+   * Format: CLRC
+   * Operation: C = 0
+   * Flags: C cleared
+   * Cycles: 4
+   */
+  private executeCLRC(_inst: Instruction): void {
+    // Clear carry flag
+    this.cpu.setFlags({ C: false });
+
+    // Add cycles
+    this.cpu.addCycles(4);
+
+    if (this.options.trace) {
+      console.log('CLRC - Carry cleared');
+    }
+  }
+
+  /**
+   * SETC - Set Carry Flag
+   * Format: SETC
+   * Operation: C = 1
+   * Flags: C set
+   * Cycles: 4
+   */
+  private executeSETC(_inst: Instruction): void {
+    // Set carry flag
+    this.cpu.setFlags({ C: true });
+
+    // Add cycles
+    this.cpu.addCycles(4);
+
+    if (this.options.trace) {
+      console.log('SETC - Carry set');
+    }
+  }
+
+  /**
+   * SDBD - Set Double Byte Data
+   * Format: SDBD
+   * Operation: Next instruction uses 16-bit immediate data
+   * Flags: None updated
+   * Cycles: 4
+   * Note: This is handled by the decoder, not the executor
+   */
+  private executeSDBD(_inst: Instruction): void {
+    // SDBD is a prefix instruction handled by the decoder
+    // If we reach here, something went wrong
+    // For now, just consume cycles
+
+    // Add cycles
+    this.cpu.addCycles(4);
+
+    if (this.options.trace) {
+      console.log('SDBD - Set double byte data (handled by decoder)');
+    }
+  }
+
+  /**
+   * SIN - Software Interrupt
+   * Format: SIN
+   * Operation: Trigger software interrupt (Phase 3)
+   * Flags: None updated
+   * Cycles: 6
+   */
+  private executeSIN(_inst: Instruction): void {
+    // Phase 3: Would pulse PCIT pin
+    // For Phase 1, just acknowledge the instruction
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log('SIN - Software interrupt (Phase 1: no-op)');
+    }
+  }
+
+  /**
+   * GSWD - Get Status Word
+   * Format: GSWD Rdst
+   * Operation: Rdst = status word
+   * Status word format: bits 4,12=C; 5,13=OV; 6,14=Z; 7,15=S
+   * Flags: None updated
+   * Cycles: 6
+   */
+  private executeGSWD(inst: Instruction): void {
+    const dst = inst.operands[0].value;
+    const flags = this.cpu.getFlags();
+
+    // Build status word
+    // Bits 4, 12 = C; 5, 13 = OV; 6, 14 = Z; 7, 15 = S
+    let status = 0;
+    if (flags.C) status |= (1 << 4) | (1 << 12);
+    if (flags.OV) status |= (1 << 5) | (1 << 13);
+    if (flags.Z) status |= (1 << 6) | (1 << 14);
+    if (flags.S) status |= (1 << 7) | (1 << 15);
+
+    // Write to destination register
+    this.cpu.setRegister(dst, status);
+
+    // No flags updated
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`GSWD R${dst} = ${status.toString(16)} (C=${flags.C}, OV=${flags.OV}, Z=${flags.Z}, S=${flags.S})`);
+    }
+  }
+
+  /**
+   * RSWD - Restore Status Word
+   * Format: RSWD Rsrc
+   * Operation: Restore flags from status word
+   * Status word format: bit 4→C, 5→OV, 6→Z, 7→S
+   * Flags: C, OV, Z, S all updated
+   * Cycles: 6
+   */
+  private executeRSWD(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const status = this.cpu.getRegister(src);
+
+    // Extract flags from status word (use lower byte)
+    const C = (status & (1 << 4)) !== 0;
+    const OV = (status & (1 << 5)) !== 0;
+    const Z = (status & (1 << 6)) !== 0;
+    const S = (status & (1 << 7)) !== 0;
+
+    // Update all flags
+    this.cpu.setFlags({ C, OV, Z, S });
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(`RSWD from R${src} = ${status.toString(16)} (C=${C}, OV=${OV}, Z=${Z}, S=${S})`);
     }
   }
 
@@ -1800,6 +2449,277 @@ export class Executor {
     if (this.options.trace) {
       console.log(
         `CMP R${dst} vs ${srcValue.toString(16)}: result=${toUint16(result).toString(16)} (not stored)`
+      );
+    }
+  }
+
+  /**
+   * CMPI - Compare immediate with register
+   * Format: CMPI #imm, Rdst
+   * Operation: Compare (Rdst - #imm), set flags but don't store result
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (normal), 10 (SDBD)
+   */
+  private executeCmpi(inst: Instruction): void {
+    const imm = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const immValue = toUint16(imm);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform comparison (subtraction without storing)
+    const result = dstValue - immValue;
+
+    // Set all arithmetic flags (but don't update register)
+    this.setArithmeticFlags(result, dstValue, immValue, true);
+
+    // Add cycles: 8 normal, 10 with SDBD
+    const cycles = inst.sdbd ? 10 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `CMPI R${dst} vs #${imm.toString(16)}: result=${toUint16(result).toString(16)} (not stored)`
+      );
+    }
+  }
+
+  /**
+   * CMPR - Compare register with register
+   * Format: CMPR Rsrc, Rdst
+   * Operation: Compare (Rdst - Rsrc), set flags but don't store result
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 6
+   */
+  private executeCmpr(inst: Instruction): void {
+    const src = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    const srcValue = this.cpu.getRegister(src);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform comparison (subtraction without storing)
+    const result = dstValue - srcValue;
+
+    // Set all arithmetic flags (but don't update register)
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Add cycles
+    this.cpu.addCycles(6);
+
+    if (this.options.trace) {
+      console.log(
+        `CMPR R${dst} vs R${src}: result=${toUint16(result).toString(16)} (not stored)`
+      );
+    }
+  }
+
+  // ========== Indirect Addressing Mode Instructions ==========
+
+  /**
+   * ADD@ - Add indirect to register
+   * Format: ADD@ Rptr, Rdst
+   * Operation: Rdst = Rdst + memory[Rptr]; auto-increment if R4/R5
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (R1-R5), 11 (R6 stack)
+   */
+  private executeAddAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const srcValue = this.memory.read(address);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform addition
+    const result = dstValue + srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Auto-increment for R4 and R5
+    if (ptrReg === 4 || ptrReg === 5) {
+      this.cpu.setRegister(ptrReg, toUint16(address + 1));
+    }
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, false);
+
+    // Add cycles: 8 normal, 11 if R6 (stack)
+    const cycles = ptrReg === 6 ? 11 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `ADD@ [@R${ptrReg}=${address.toString(16)}] + R${dst} = ${toUint16(result).toString(16)}`
+      );
+    }
+  }
+
+  /**
+   * SUB@ - Subtract indirect from register
+   * Format: SUB@ Rptr, Rdst
+   * Operation: Rdst = Rdst - memory[Rptr]; auto-increment if R4/R5
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (R1-R5), 11 (R6 stack)
+   */
+  private executeSubAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const srcValue = this.memory.read(address);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform subtraction
+    const result = dstValue - srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Auto-increment for R4 and R5
+    if (ptrReg === 4 || ptrReg === 5) {
+      this.cpu.setRegister(ptrReg, toUint16(address + 1));
+    }
+
+    // Set all arithmetic flags
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Add cycles: 8 normal, 11 if R6 (stack)
+    const cycles = ptrReg === 6 ? 11 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `SUB@ R${dst} - [@R${ptrReg}=${address.toString(16)}] = ${toUint16(result).toString(16)}`
+      );
+    }
+  }
+
+  /**
+   * CMP@ - Compare indirect with register
+   * Format: CMP@ Rptr, Rdst
+   * Operation: Compare (Rdst - memory[Rptr]), set flags; auto-increment if R4/R5
+   * Flags: C, OV, Z, S (all arithmetic flags)
+   * Cycles: 8 (R1-R5), 11 (R6 stack)
+   */
+  private executeCmpAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const srcValue = this.memory.read(address);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform comparison (subtraction without storing to dst)
+    const result = dstValue - srcValue;
+
+    // Auto-increment for R4 and R5
+    if (ptrReg === 4 || ptrReg === 5) {
+      this.cpu.setRegister(ptrReg, toUint16(address + 1));
+    }
+
+    // Set all arithmetic flags (but don't update dst register)
+    this.setArithmeticFlags(result, dstValue, srcValue, true);
+
+    // Add cycles: 8 normal, 11 if R6 (stack)
+    const cycles = ptrReg === 6 ? 11 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `CMP@ R${dst} vs [@R${ptrReg}=${address.toString(16)}]: result=${toUint16(result).toString(16)} (not stored)`
+      );
+    }
+  }
+
+  /**
+   * AND@ - Bitwise AND indirect with register
+   * Format: AND@ Rptr, Rdst
+   * Operation: Rdst = Rdst & memory[Rptr]; auto-increment if R4/R5
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 8 (R1-R5), 11 (R6 stack)
+   */
+  private executeAndAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const srcValue = this.memory.read(address);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform AND
+    const result = dstValue & srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Auto-increment for R4 and R5
+    if (ptrReg === 4 || ptrReg === 5) {
+      this.cpu.setRegister(ptrReg, toUint16(address + 1));
+    }
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Add cycles: 8 normal, 11 if R6 (stack)
+    const cycles = ptrReg === 6 ? 11 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `AND@ [@R${ptrReg}=${address.toString(16)}] & R${dst} = ${result.toString(16)}`
+      );
+    }
+  }
+
+  /**
+   * XOR@ - Bitwise XOR indirect with register
+   * Format: XOR@ Rptr, Rdst
+   * Operation: Rdst = Rdst ^ memory[Rptr]; auto-increment if R4/R5
+   * Flags: Z, S updated; C, OV unchanged
+   * Cycles: 8 (R1-R5), 11 (R6 stack)
+   */
+  private executeXorAt(inst: Instruction): void {
+    const ptrReg = inst.operands[0].value;
+    const dst = inst.operands[1].value;
+
+    // Read address from pointer register
+    const address = this.cpu.getRegister(ptrReg);
+
+    // Read value from memory
+    const srcValue = this.memory.read(address);
+    const dstValue = this.cpu.getRegister(dst);
+
+    // Perform XOR
+    const result = dstValue ^ srcValue;
+    this.cpu.setRegister(dst, result);
+
+    // Auto-increment for R4 and R5
+    if (ptrReg === 4 || ptrReg === 5) {
+      this.cpu.setRegister(ptrReg, toUint16(address + 1));
+    }
+
+    // Only set S and Z flags (C, OV unchanged)
+    const Z = result === 0;
+    const S = getBit(result, 15) === 1;
+    this.cpu.setFlags({ Z, S });
+
+    // Add cycles: 8 normal, 11 if R6 (stack)
+    const cycles = ptrReg === 6 ? 11 : 8;
+    this.cpu.addCycles(cycles);
+
+    if (this.options.trace) {
+      console.log(
+        `XOR@ [@R${ptrReg}=${address.toString(16)}] ^ R${dst} = ${result.toString(16)}`
       );
     }
   }
