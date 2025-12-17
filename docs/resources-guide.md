@@ -269,6 +269,82 @@ jq '.sections[] | select(.title == "REGISTER TO REGISTER")' docs/cp1600-ref/cp16
 - Written for original developers, very technical
 - Good for Phase 3 peripheral implementation
 
+### System Binaries (Phase 1.5)
+
+#### exec.bin
+- **Format**: Binary ROM image (4K)
+- **Content**: Intellivision Executive ROM (operating system)
+- **Location**: $1000-$1FFF in memory map
+- **Size**: 4096 bytes (4K × 16-bit words)
+- **Source**: Extracted from Intellivision Master Component or jzIntv
+- **Best for**: Phase 1.5 - Exec ROM Integration (Sprint 1.10)
+
+**When to use:**
+- Implementing Exec ROM integration (Sprint 1.10)
+- Testing cartridge initialization via UDB
+- Validating system RESET behavior
+- Running real Intellivision cartridges
+
+**Important notes:**
+- **Licensing**: Intellivision ROM may have copyright restrictions
+- **Distribution**: Not included in open-source repository (resources/ folder excluded from git)
+- **Legal considerations**: User must provide their own ROM or use jzIntv's approach
+- **Reference**: "Your Friend The EXEC" PDF documents the API
+
+**Usage in emulator:**
+```typescript
+// Example: Load Exec ROM into memory during initialization
+const execRom = fs.readFileSync('resources/exec.bin');
+memory.load(0x1000, execRom); // Load at $1000-$1FFF
+```
+
+**Exec ROM Functions:**
+- System initialization on RESET
+- Cartridge UDB (Universal Data Block) parsing
+- Background/BACKTAB setup
+- GRAM loading from cartridge
+- Moving object management
+- Sound routines
+- Utility functions (RAND, MULT, etc.)
+
+---
+
+#### grom.bin
+- **Format**: Binary ROM image (2K)
+- **Content**: Graphics ROM - 256 built-in character pictures
+- **Location**: $3000-$37FF in memory map
+- **Size**: 2048 bytes (2K, 256 pictures × 8 bytes each)
+- **Source**: Extracted from Intellivision Master Component or jzIntv
+- **Best for**: Phase 1.5 - GROM/GRAM Support (Sprint 1.11)
+
+**When to use:**
+- Implementing GROM support (Sprint 1.11)
+- Loading built-in character set
+- Testing background display
+- Validating BACKTAB rendering
+
+**Important notes:**
+- **Licensing**: Intellivision ROM may have copyright restrictions
+- **Distribution**: Not included in open-source repository
+- **First 96 pictures**: Standard ASCII character set (A-Z, 0-9, symbols)
+- **Remaining 160 pictures**: Graphics, borders, game-specific characters
+- **Format**: 8×8 pixel pictures, 1 bit per pixel (monochrome)
+
+**Usage in emulator:**
+```typescript
+// Example: Load GROM into memory during initialization
+const grom = fs.readFileSync('resources/grom.bin');
+memory.load(0x3000, grom); // Load at $3000-$37FF
+```
+
+**GROM Structure:**
+- Each picture: 8 bytes (8 rows × 8 pixels)
+- Bit pattern defines which pixels are "on" vs "off"
+- Color determined by BACKTAB entry or MOB attributes
+- Accessible by both CPU and STIC (for rendering)
+
+---
+
 ### Project History
 
 #### Claude-pkIntvMCP-first-convo-2025-12-08.md
@@ -340,6 +416,12 @@ When in doubt: test against actual jzIntv behavior.
 1. `Your Friend The EXEC (Transcribed).pdf`
 2. Real usage: `Air Strike/air-strike-commented-disassembly.md`
 
+### I need Exec ROM or GROM for Phase 1.5
+1. `exec.bin` - Intellivision Executive ROM (4K at $1000-$1FFF)
+2. `grom.bin` - Graphics ROM (2K at $3000-$37FF, 256 pictures)
+3. Reference: `Your Friend The EXEC (Transcribed).pdf` for Exec API
+4. Reference: `docs/intellivision_memory_map.md` for memory layout
+
 ### I need to implement peripherals (Phase 3)
 1. STIC: `jzintv-20200712-src/doc/programming/stic.txt`
 2. PSG: `jzintv-20200712-src/doc/programming/psg.txt`
@@ -359,6 +441,12 @@ When in doubt: test against actual jzIntv behavior.
 - ✅ Real test ROMs (Air Strike + examples)
 - ✅ Memory map and peripheral docs
 - ✅ Project history and rationale
+- ✅ Intellivision memory map documentation
+
+**Phase 1.5 Resources (User-provided):**
+- 📦 exec.bin - Intellivision Exec ROM (4K, user must provide)
+- 📦 grom.bin - Graphics ROM (2K, user must provide)
+- **Note**: These are documented in resources-guide.md but not included in repository due to licensing
 
 **Still needed:**
 - ⏳ Actual cycle timing data (must extract from Users Manual PDF, page 53+)
