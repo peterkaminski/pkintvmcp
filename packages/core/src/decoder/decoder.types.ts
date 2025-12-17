@@ -17,6 +17,7 @@ export enum Opcode {
 
   // Data Movement
   MVI = 'MVI',       // Move immediate to register
+  MVII = 'MVII',     // Move in immediate data to register
   MVO = 'MVO',       // Move register to output (memory)
   MVOI = 'MVOI',     // Move to output with immediate address
   MVI_AT = 'MVI@',   // Move immediate with auto-increment
@@ -26,19 +27,24 @@ export enum Opcode {
   // Arithmetic
   ADD = 'ADD',       // Add memory to register
   ADDR = 'ADDR',     // Add register to register
+  ADDI = 'ADDI',     // Add immediate to register
+  ADD_AT = 'ADD@',   // Add indirect to register
   SUB = 'SUB',       // Subtract memory from register
   SUBR = 'SUBR',     // Subtract register from register
-  INC = 'INC',       // Increment memory
+  SUBI = 'SUBI',     // Subtract immediate from register
+  SUB_AT = 'SUB@',   // Subtract indirect from register
   INCR = 'INCR',     // Increment register
-  DEC = 'DEC',       // Decrement memory
   DECR = 'DECR',     // Decrement register
 
   // Logic
   AND = 'AND',       // AND memory with register
   ANDR = 'ANDR',     // AND register with register
+  ANDI = 'ANDI',     // AND immediate with register
+  AND_AT = 'AND@',   // AND indirect with register
   XOR = 'XOR',       // XOR memory with register
   XORR = 'XORR',     // XOR register with register
-  CLR = 'CLR',       // Clear memory location
+  XORI = 'XORI',     // XOR immediate with register
+  XOR_AT = 'XOR@',   // XOR indirect with register
   CLRR = 'CLRR',     // Clear register
 
   // Control Flow - Unconditional
@@ -71,11 +77,11 @@ export enum Opcode {
   PULR = 'PULR',     // Pull from stack to register
 
   // Status / Testing
-  TST = 'TST',       // Test memory location
   TSTR = 'TSTR',     // Test register
   CMP = 'CMP',       // Compare memory with register
   CMPR = 'CMPR',     // Compare register with register
   CMPI = 'CMPI',     // Compare with immediate
+  CMP_AT = 'CMP@',   // Compare indirect with register
 
   // Miscellaneous
   NOP = 'NOP',       // No operation
