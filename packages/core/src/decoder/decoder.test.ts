@@ -161,7 +161,7 @@ describe('Decoder', () => {
     // mnm_imm_2op[8] = { err, MVOI, MVII, ADDI, SUBI, CMPI, ANDI, XORI }
     // So MVII (MVI) has opcode = 010
 
-    test('decodes MVI R1, #42 (without SDBD)', () => {
+    test('decodes MVII R1, #42 (without SDBD)', () => {
       // MVII: opcode=010, mode=111, dest=001
       // Pattern: 1 010 111 001 = 0x2B9
       // Immediate value 42 (0x2A) in next word
@@ -170,7 +170,7 @@ describe('Decoder', () => {
 
       const inst = decoder.decode(0x5000, false);
 
-      expect(inst.opcode).toBe(OpcodeEnum.MVI);
+      expect(inst.opcode).toBe(OpcodeEnum.MVII);
       expect(inst.addressingMode).toBe(AddressingModeEnum.IMMEDIATE);
       expect(inst.operands).toHaveLength(2);
       // Operands now match assembly syntax: MVI #42, R1 → [immediate, register]
@@ -182,7 +182,7 @@ describe('Decoder', () => {
       expect(inst.length).toBe(2); // Instruction + immediate word
     });
 
-    test('decodes MVI R2, #0x1234 (with SDBD)', () => {
+    test('decodes MVII R2, #0x1234 (with SDBD)', () => {
       // MVII: opcode=010, mode=111, dest=010
       // Pattern: 1 010 111 010 = 0x2BA
       // With SDBD: 16-bit immediate split across 2 words
@@ -192,7 +192,7 @@ describe('Decoder', () => {
 
       const inst = decoder.decode(0x5000, true); // SDBD active
 
-      expect(inst.opcode).toBe(OpcodeEnum.MVI);
+      expect(inst.opcode).toBe(OpcodeEnum.MVII);
       expect(inst.addressingMode).toBe(AddressingModeEnum.SDBD_MODIFIED);
       expect(inst.operands).toHaveLength(2);
       // Operands now match assembly syntax: MVI #0x1234, R2 → [immediate, register]
@@ -275,7 +275,7 @@ describe('Decoder', () => {
 
       const inst = decoder.decode(0x5000, false);
 
-      expect(inst.opcode).toBe(OpcodeEnum.MVI);
+      expect(inst.opcode).toBe(OpcodeEnum.MVI_AT);
       expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
       expect(inst.operands).toHaveLength(2);
       // Operands match assembly syntax: MVI@ R4, R2 → [pointer, destination]
@@ -293,7 +293,7 @@ describe('Decoder', () => {
 
       const inst = decoder.decode(0x5000, false);
 
-      expect(inst.opcode).toBe(OpcodeEnum.ADD);
+      expect(inst.opcode).toBe(OpcodeEnum.ADD_AT);
       expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
       expect(inst.operands[0].value).toBe(1); // R1 (pointer)
       expect(inst.operands[1].value).toBe(5); // R5 (destination)
@@ -306,7 +306,7 @@ describe('Decoder', () => {
 
       const inst = decoder.decode(0x5000, false);
 
-      expect(inst.opcode).toBe(OpcodeEnum.CMP);
+      expect(inst.opcode).toBe(OpcodeEnum.CMP_AT);
       expect(inst.addressingMode).toBe(AddressingModeEnum.INDIRECT);
       expect(inst.operands[0].value).toBe(6); // R6 (stack pointer)
       expect(inst.operands[1].value).toBe(0); // R0

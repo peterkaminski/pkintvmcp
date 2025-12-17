@@ -227,13 +227,13 @@ export class Decoder {
     if ((w & 0x238) === 0x238) {
       const op = (w >> 6) & 0x7;
       switch (op) {
-        case 1: return OpcodeEnum.MVO;  // MVOI - output immediate (rare)
-        case 2: return OpcodeEnum.MVI;  // MVII - move immediate
-        case 3: return OpcodeEnum.ADD;  // ADDI
-        case 4: return OpcodeEnum.SUB;  // SUBI
-        case 5: return OpcodeEnum.CMP;  // CMPI
-        case 6: return OpcodeEnum.AND;  // ANDI
-        case 7: return OpcodeEnum.XOR;  // XORI
+        case 1: return OpcodeEnum.MVOI;  // MVOI - move out immediate
+        case 2: return OpcodeEnum.MVII;  // MVII - move in immediate
+        case 3: return OpcodeEnum.ADDI;  // ADDI - add immediate
+        case 4: return OpcodeEnum.SUBI;  // SUBI - subtract immediate
+        case 5: return OpcodeEnum.CMPI;  // CMPI - compare immediate
+        case 6: return OpcodeEnum.ANDI;  // ANDI - AND immediate
+        case 7: return OpcodeEnum.XORI;  // XORI - XOR immediate
       }
     }
 
@@ -257,13 +257,13 @@ export class Decoder {
     if ((w & 0x200) === 0x200) {
       const op = (w >> 6) & 0x7;
       switch (op) {
-        case 1: return OpcodeEnum.MVO;  // Indirect MVO
-        case 2: return OpcodeEnum.MVI;  // Indirect MVI
-        case 3: return OpcodeEnum.ADD;  // Indirect ADD
-        case 4: return OpcodeEnum.SUB;  // Indirect SUB
-        case 5: return OpcodeEnum.CMP;  // Indirect CMP
-        case 6: return OpcodeEnum.AND;  // Indirect AND
-        case 7: return OpcodeEnum.XOR;  // Indirect XOR
+        case 1: return OpcodeEnum.MVO_AT;  // MVO@ - move out indirect
+        case 2: return OpcodeEnum.MVI_AT;  // MVI@ - move in indirect
+        case 3: return OpcodeEnum.ADD_AT;  // ADD@ - add indirect
+        case 4: return OpcodeEnum.SUB_AT;  // SUB@ - subtract indirect
+        case 5: return OpcodeEnum.CMP_AT;  // CMP@ - compare indirect
+        case 6: return OpcodeEnum.AND_AT;  // AND@ - AND indirect
+        case 7: return OpcodeEnum.XOR_AT;  // XOR@ - XOR indirect
       }
     }
 
@@ -307,6 +307,16 @@ export class Decoder {
     // Stack addressing
     if (opcode === OpcodeEnum.PSHR || opcode === OpcodeEnum.PULR) {
       return AddressingModeEnum.STACK;
+    }
+
+    // Immediate addressing (specific immediate opcodes)
+    if (this.isImmediateOpcode(opcode)) {
+      return AddressingModeEnum.IMMEDIATE;
+    }
+
+    // Indirect addressing (specific indirect opcodes)
+    if (this.isIndirectOpcode(opcode)) {
+      return AddressingModeEnum.INDIRECT;
     }
 
     // Branch instructions (PC-relative addressing)
@@ -593,12 +603,20 @@ export class Decoder {
    */
   private usesSDBD(opcode: Opcode): boolean {
     return (
+      // Direct addressing versions
       opcode === OpcodeEnum.MVI ||
       opcode === OpcodeEnum.ADD ||
       opcode === OpcodeEnum.SUB ||
       opcode === OpcodeEnum.CMP ||
       opcode === OpcodeEnum.AND ||
-      opcode === OpcodeEnum.XOR
+      opcode === OpcodeEnum.XOR ||
+      // Immediate mode versions (SDBD extends immediate value to 16 bits)
+      opcode === OpcodeEnum.MVII ||
+      opcode === OpcodeEnum.ADDI ||
+      opcode === OpcodeEnum.SUBI ||
+      opcode === OpcodeEnum.CMPI ||
+      opcode === OpcodeEnum.ANDI ||
+      opcode === OpcodeEnum.XORI
     );
   }
 
@@ -647,6 +665,36 @@ export class Decoder {
       opcode === OpcodeEnum.CMP ||
       opcode === OpcodeEnum.AND ||
       opcode === OpcodeEnum.XOR
+    );
+  }
+
+  /**
+   * Check if opcode is an immediate mode instruction
+   */
+  private isImmediateOpcode(opcode: Opcode): boolean {
+    return (
+      opcode === OpcodeEnum.MVII ||
+      opcode === OpcodeEnum.MVOI ||
+      opcode === OpcodeEnum.ADDI ||
+      opcode === OpcodeEnum.SUBI ||
+      opcode === OpcodeEnum.CMPI ||
+      opcode === OpcodeEnum.ANDI ||
+      opcode === OpcodeEnum.XORI
+    );
+  }
+
+  /**
+   * Check if opcode is an indirect mode instruction
+   */
+  private isIndirectOpcode(opcode: Opcode): boolean {
+    return (
+      opcode === OpcodeEnum.MVI_AT ||
+      opcode === OpcodeEnum.MVO_AT ||
+      opcode === OpcodeEnum.ADD_AT ||
+      opcode === OpcodeEnum.SUB_AT ||
+      opcode === OpcodeEnum.CMP_AT ||
+      opcode === OpcodeEnum.AND_AT ||
+      opcode === OpcodeEnum.XOR_AT
     );
   }
 }
