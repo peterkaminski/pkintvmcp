@@ -10,9 +10,9 @@ pkIntvMCP is an emulator and debugging tool for the Intellivision's CP-1600 micr
 
 This project is under active development, and different parts of the code and/or documentation may not match in the moment. Tests may not exist or may fail. It's all expected to converge and to be completely reviewed and tested later in the project.
 
-As of 2025-12-14, the CPU is substantially complete. Internal unit tests pass, but external and integration tests have not been completed. There may be bugs, possibly significant.
+As of 2025-12-16, the CPU core is complete with all 79 CP-1600 instructions implemented and tested (348 tests passing). Next phase: Exec ROM integration for system-level debugging. External validation against jzIntv has not been completed yet.
 
-The CLI test harness and MCP server can both run code. Right now, it should be able regular CP-1600 code, but it's not set up to run Intellivision carts yet, even though that's the ultimate intention.
+The CLI test harness can run CP-1600 code. MCP server implementation is planned for Phase 1.5 after Exec integration.
 
 ## What Is This?
 
@@ -99,7 +99,7 @@ We validate pkIntvMCP's behavior against jzIntv to ensure correctness, but they 
 
 ## Current Status
 
-**Sprint 1.6.1 Complete** - Phase 1 Instruction Set 100% ✅
+**Sprint 1.7 Complete** - Clean CPU Emulation, All Instructions Implemented ✅
 
 We're building this in phases:
 - ✅ **Sprint 1.1**: Documentation and infrastructure complete
@@ -110,34 +110,40 @@ We're building this in phases:
 - ✅ **Sprint 1.5.1**: 6 CP-1600 assembly examples (~2,500 lines documentation)
 - ✅ **Sprint 1.6**: Shifts, rotates, and immediate forms (14 instructions)
 - ✅ **Sprint 1.6.1**: Auto-increment instructions (MVI@, MVO@)
-- 📋 **Sprint 1.7**: Basic MCP Server (execution control, state inspection)
+- ✅ **Sprint 1.7**: Complete instruction set implementation (28 additional instructions)
+- 📋 **Phase 1.5**: Exec ROM integration and system-level debugging
 - ⏳ **Phase 2**: Validation against jzIntv reference emulator
 
 **Current Implementation Status:**
 - **CPU Core**: ✅ Complete (8 registers, 4 flags, cycle tracking, interrupt enable)
-- **Decoder**: ✅ Complete (116 opcodes, all addressing modes)
-- **Executor**: ✅ 51/51 instructions (100% Phase 1 complete!)
-  - Data Movement: MOVR, MVI, MVO, MVI@, MVO@
-  - Arithmetic: ADDR, SUBR, INCR, DECR, ADD, SUB
-  - Logical: ANDR, XORR, CLRR, AND, XOR
-  - Comparison: TSTR, CMP
-  - Control: HLT, NOPP, EIS, DIS
-  - Control Flow: B, J, JR, BEQ, BNEQ, BC, BNC, BOV, BNOV, BMI, BPL, BLT, BGE, BLE, BGT
+- **Decoder**: ✅ Complete (116 opcodes, all addressing modes, SDBD prefix support)
+- **Executor**: ✅ 79/79 instructions (100% CP-1600 instruction set complete!)
+  - Data Movement: MOVR, MVI, MVII, MVOI, MVO, MVI@, MVO@
+  - Arithmetic: ADDR, SUBR, INCR, DECR, ADD, ADDI, ADD@, SUB, SUBI, SUB@, ADCR
+  - Logical: ANDR, XORR, CLRR, COMR, AND, ANDI, AND@, XOR, XORI, XOR@
+  - Comparison: TSTR, CMP, CMPI, CMP@, CMPR
+  - Control: HLT, NOP, NOPP, EIS, DIS, TCI, CLRC, SETC, SDBD, SIN, GSWD, RSWD
+  - Control Flow: B, J, JD, JE, JR, BEQ, BNEQ, BC, BNC, BOV, BNOV, BMI, BPL, BLT, BGE, BLE, BGT, BESC, BUSC, BEXT
   - Subroutines: JSR, JSRE, JSRD
   - Stack: PSHR, PULR
   - Shifts: SLL, SLLC, SLR, SAR, SARC
   - Rotates: RLC, RRC
   - Bit Manipulation: SWAP, NEGR
-- **Test Coverage**: 92.88% (342 tests passing)
+- **Test Coverage**: 93%+ (348 tests passing, all green)
 
 **What's Working:**
+- ✅ Complete CP-1600 instruction set (79/79 instructions)
+- ✅ All addressing modes (immediate, direct, indirect, register, indexed, stack)
+- ✅ SDBD prefix for 16-bit immediate values
 - ✅ Loops with counters
-- ✅ Conditional branching (all flag conditions)
-- ✅ Subroutine calls with stack
-- ✅ Nested function calls
-- ✅ Signed comparisons
+- ✅ Conditional branching (all 18 branch variants)
+- ✅ Subroutine calls with stack (PSHR/PULR)
+- ✅ Nested function calls with interrupt control (JSRE/JSRD)
+- ✅ Signed and unsigned comparisons
 - ✅ Bit manipulation (shifts, rotates, byte swapping)
+- ✅ Status word save/restore (GSWD/RSWD)
 - ✅ All Sprint 1.5.1 assembly examples fully executable
+- ✅ Ready for Exec ROM integration (Phase 1.5)
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the full development plan and [docs/project-log/](docs/project-log/) for detailed progress history.
 
@@ -156,13 +162,13 @@ Each example includes comprehensive documentation (~250-400 lines) with executio
 
 ### Can I Use It Now?
 
-Almost! The CPU core and complete Phase 1 instruction set (51/51 instructions) are implemented and tested. All Sprint 1.5.1 assembly examples are now fully executable. We need to implement the MCP server interface and validate against jzIntv before the tool is ready for real debugging.
+Almost! The CPU core with complete CP-1600 instruction set (79/79 instructions) is implemented and tested with 348 passing tests. All Sprint 1.5.1 assembly examples are fully executable. Next steps: Exec ROM integration and MCP server interface.
 
-**What's Left:**
-- Sprint 1.7: Basic MCP Server (execution control, state inspection)
-- Sprint 1.8: Debugging Tools (breakpoints, trace, run_until)
-- Phase 2: jzIntv validation and testing
-- **First Usable Release**: Approximately 2-3 weeks
+**What's Next:**
+- Phase 1.5: Exec ROM integration (PRINT, multiplication, division routines)
+- Phase 1.5: System-level debugging with Exec calls
+- Phase 2: jzIntv validation and comprehensive testing
+- **First Usable Release**: Now targeting Q1 2025 (with Exec support)
 
 If you want to contribute or follow along:
 - Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details
